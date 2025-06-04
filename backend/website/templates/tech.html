@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+{% include 'head.html' %}
+
+<body>
+ {% include 'navbar.html' %}
+
+
+
+
+    <div class="text-center pt-5">
+            <h1>Tech Stack</h1>
+            <hr class="my-4">
+    </div>
+   
+    <div class="container" class="wrapper flex-grow-1">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-sm-7">
+
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 id="how-are-we-creating-the-data-you-see-on-this-website">
+                            How are we creating the data you see on this website?
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                We use large language models to parse what we find on the
+                                internet.
+                            </p>
+                            <p class="card-text">
+                                Our tech stack includes:
+                            </p>
+                            <p class="card-text">
+                                <ul>
+                                    <li>Python Pydantic defines the data model.</li>
+                                    <li>Python FAST API serves the web pages.</li>
+                                    <li>Azure Startup Grant pays the cloud costs.</li>
+                                    <li>OpenSearch retrieves the studies.</li>
+                                    <li>OpenAI's language models to parse raw text.</li>
+                                    <li><a href="https://htmx.org/">HTMX</a> to build the minimal front end.</li>
+                                    <li>Reddit to fetch personal stories.</li>
+                                    <li>Medarxiv to fetch clinical studies.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+
+
+                   <div class="clear"></div> 
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--container-->
+    {% include 'footer.html' %}
+  </body>
+</html>

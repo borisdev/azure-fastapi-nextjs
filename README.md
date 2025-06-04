@@ -1,239 +1,147 @@
-# Full Stack FastAPI Template
+# Deploy cheatsheet
 
-<a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3ATest" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test/badge.svg" alt="Test"></a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/fastapi/full-stack-fastapi-template" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/fastapi/full-stack-fastapi-template.svg" alt="Coverage"></a>
+Run my python AI stack (Nobsmed.com) on Azure Container Apps
 
-## Technology Stack and Features
+## Base Templates
 
--   ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
-    -   🧰 [SQLModel](https://sqlmodel.tiangolo.com) for the Python SQL database interactions (ORM).
-    -   🔍 [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
-    -   💾 [PostgreSQL](https://www.postgresql.org) as the SQL database.
--   🚀 [React](https://react.dev) for the frontend.
-    -   💃 Using TypeScript, hooks, Vite, and other parts of a modern frontend stack.
-    -   🎨 [Chakra UI](https://chakra-ui.com) for the frontend components.
-    -   🤖 An automatically generated frontend client.
-    -   🧪 [Playwright](https://playwright.dev) for End-to-End testing.
-    -   🦇 Dark mode support.
--   🐋 [Docker Compose](https://www.docker.com) for development and production.
--   🔒 Secure password hashing by default.
--   🔑 JWT (JSON Web Token) authentication.
--   📫 Email based password recovery.
--   ✅ Tests with [Pytest](https://pytest.org).
--   📞 [Traefik](https://traefik.io) as a reverse proxy / load balancer.
--   🚢 Deployment instructions using Docker Compose, including how to set up a frontend Traefik proxy to handle automatic HTTPS certificates.
--   🏭 CI (continuous integration) and CD (continuous deployment) based on GitHub Actions.
+-   https://github.com/fastapi/full-stack-fastapi-template
 
-### Dashboard Login
+## Current Stack
 
-[![API docs](img/login.png)](https://github.com/fastapi/full-stack-fastapi-template)
+-   Poetry
+-   Docker multi-stage builds
+-   Backend: FastAPI serving HTMX and Typescript
+-   OpenSearch DB
+-   Azure Registry
+-   Azure Container app
 
-### Dashboard - Admin
+## Upcoming stack changes
 
-[![API docs](img/dashboard.png)](https://github.com/fastapi/full-stack-fastapi-template)
+-   `uv`, one repo holds a deployment composed of packages versioned by different branches
+-   deploy with [az containerapp compose](https://learn.microsoft.com/en-us/cli/azure/containerapp/compose?view=azure-cli-latest)
+-   Backend: [Fast API - LangGraph Platform](https://www.langchain.com/langgraph-platform))
+-   Frontend: Next.js, React components, Tailwind CSS, TypeScript
+-   Azure Search DB
+-   Azure Redis
 
-### Dashboard - Create User
+---
 
-[![API docs](img/dashboard-create.png)](https://github.com/fastapi/full-stack-fastapi-template)
+## Limit scope because of 1 person team
 
-### Dashboard - Items
+Transparency over automation
 
-[![API docs](img/dashboard-items.png)](https://github.com/fastapi/full-stack-fastapi-template)
+-   No Github actions
+-   No Terraform - Azure CLI
 
-### Dashboard - User Settings
+---
 
-[![API docs](img/dashboard-user-settings.png)](https://github.com/fastapi/full-stack-fastapi-template)
+## Steps to run my stack
 
-### Dashboard - Dark Mode
+1. Build the images locally
+2. Push the images to cloud registry
+3. Deploy cloud container based on new image in registry
 
-[![API docs](img/dashboard-dark.png)](https://github.com/fastapi/full-stack-fastapi-template)
+Source: [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
 
-### Interactive API Documentation
+Assumptions:
 
-[![API docs](img/docs.png)](https://github.com/fastapi/full-stack-fastapi-template)
+-   Azure: Azure CLI installed and your logged into it
+-   you have created a resource group in Azure (e.g., for me its `nobsmed`)
 
-## How To Use It
+## Pre-requisites steps
 
-You can **just fork or clone** this repository and use it as is.
+I prefix names with `nobs` because my company is called Nobsmed.
 
-✨ It just works. ✨
+```console
+# create the registry
 
-### How to Use a Private Repository
+az acr create --resource-group nobsmed --name nobsregistry --sku Basic
 
-If you want to have a private repository, GitHub won't allow you to simply fork it as it doesn't allow changing the visibility of forks.
+# sanity check
 
-But you can do the following:
-
--   Create a new GitHub repo, for example `my-full-stack`.
--   Clone this repository manually, set the name with the name of the project you want to use, for example `my-full-stack`:
-
-```bash
-git clone git@github.com:fastapi/full-stack-fastapi-template.git my-full-stack
+az acr show --name nobsregistry --query loginServer --output table
+Result
+--------------------------
+nobsmedregistry.azurecr.io
 ```
 
--   Enter into the new directory:
+---
+
+## Ongoing launch steps
 
 ```bash
-cd my-full-stack
+# Build backend and frontend docker images:
+
+docker build --tag nobs_backend --file docker/Dockerfile .
+docker build --tag nobs_frontend --file docker/Dockerfile .
+
+# Tag the images for Azure Container Registry
+
+docker tag nobs_backend nobsregistry.azurecr.io/nobs_backend:v1
+
+# Sanity check
+
+docker images
+REPOSITORY                             TAG       IMAGE ID       CREATED        SIZE
+nobsregistry.azurecr.io/nobs_backend      v1        585a4696bedd   44 hours ago   197MB
+nobs_backend                           latest    585a4696bedd   43 hours ago   197MB
+nobs_frontend                          latest    585a4696bedd   43 hours ago   197MB
+
+# Login to Azure Container Registry
+
+az acr login --name nobsregistry
+
+# Push image to Azure Container Registry
+
+docker push nobsregistry.azurecr.io/nobs_backend:v1
+
+**# Sanity check .....you see the output below**
+
+The push refers to repository [nobsregistry.azurecr.io/nobs_backend]
+5f70bf18a086: Preparing
+7d577052c02c: Preparing
+ac42807ce093: Preparing
+d54c60f73cbb: Preparing
+d559dc6e6c29: Preparing
+8f697a207321: Waiting
+
+
+# Sanity check that the image is in the registry
+
+az acr repository list --name nobsregistry
+[
+"nobs_backend",
+]
 ```
 
--   Set the new origin to your new repository, copy it from the GitHub interface, for example:
+```console
+source azure_env
+source azure_deploy
 
-```bash
-git remote set-url origin git@github.com:octocat/my-full-stack.git
+az containerapp create \
+  --name $API_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --environment $ENVIRONMENT \
+  --image $ACR_NAME.azurecr.io/$API_NAME \
+  --target-port 8080 \
+  --ingress external \
+  --registry-server $ACR_NAME.azurecr.io \
+  --user-assigned "$IDENTITY_ID" \
+  --registry-identity "$IDENTITY_ID" \
+  --query properties.configuration.ingress.fqdn
+
+az container delete --name sampleapp --resource-group nobsmed
 ```
 
--   Add this repo as another "remote" to allow you to get updates later:
+Table here
 
-```bash
-git remote add upstream git@github.com:fastapi/full-stack-fastapi-template.git
-```
+## How is the different from the best full stack template, [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template)?
 
--   Push the code to your new repository:
+-   Extended for Azure multi-service container app deploys
+-   Pruned down to meet my simpler requirements
+-   Replacing `nginx` frontend server with `NextJS` frontend server
+-   Multi-layer docker build from 3x smaller image
 
-```bash
-git push -u origin master
-```
+## How different from other FASTAPI-NEXTJS template?
 
-### Update From the Original Template
-
-After cloning the repository, and after doing changes, you might want to get the latest changes from this original template.
-
--   Make sure you added the original repository as a remote, you can check it with:
-
-```bash
-git remote -v
-
-origin    git@github.com:octocat/my-full-stack.git (fetch)
-origin    git@github.com:octocat/my-full-stack.git (push)
-upstream    git@github.com:fastapi/full-stack-fastapi-template.git (fetch)
-upstream    git@github.com:fastapi/full-stack-fastapi-template.git (push)
-```
-
--   Pull the latest changes without merging:
-
-```bash
-git pull --no-commit upstream master
-```
-
-This will download the latest changes from this template without committing them, that way you can check everything is right before committing.
-
--   If there are conflicts, solve them in your editor.
-
--   Once you are done, commit the changes:
-
-```bash
-git merge --continue
-```
-
-### Configure
-
-You can then update configs in the `.env` files to customize your configurations.
-
-Before deploying it, make sure you change at least the values for:
-
--   `SECRET_KEY`
--   `FIRST_SUPERUSER_PASSWORD`
--   `POSTGRES_PASSWORD`
-
-You can (and should) pass these as environment variables from secrets.
-
-Read the [deployment.md](./deployment.md) docs for more details.
-
-### Generate Secret Keys
-
-Some environment variables in the `.env` file have a default value of `changethis`.
-
-You have to change them with a secret key, to generate secret keys you can run the following command:
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-```
-
-Copy the content and use that as password / secret key. And run that again to generate another secure key.
-
-## How To Use It - Alternative With Copier
-
-This repository also supports generating a new project using [Copier](https://copier.readthedocs.io).
-
-It will copy all the files, ask you configuration questions, and update the `.env` files with your answers.
-
-### Install Copier
-
-You can install Copier with:
-
-```bash
-pip install copier
-```
-
-Or better, if you have [`pipx`](https://pipx.pypa.io/), you can run it with:
-
-```bash
-pipx install copier
-```
-
-**Note**: If you have `pipx`, installing copier is optional, you could run it directly.
-
-### Generate a Project With Copier
-
-Decide a name for your new project's directory, you will use it below. For example, `my-awesome-project`.
-
-Go to the directory that will be the parent of your project, and run the command with your project's name:
-
-```bash
-copier copy https://github.com/fastapi/full-stack-fastapi-template my-awesome-project --trust
-```
-
-If you have `pipx` and you didn't install `copier`, you can run it directly:
-
-```bash
-pipx run copier copy https://github.com/fastapi/full-stack-fastapi-template my-awesome-project --trust
-```
-
-**Note** the `--trust` option is necessary to be able to execute a [post-creation script](https://github.com/fastapi/full-stack-fastapi-template/blob/master/.copier/update_dotenv.py) that updates your `.env` files.
-
-### Input Variables
-
-Copier will ask you for some data, you might want to have at hand before generating the project.
-
-But don't worry, you can just update any of that in the `.env` files afterwards.
-
-The input variables, with their default values (some auto generated) are:
-
--   `project_name`: (default: `"FastAPI Project"`) The name of the project, shown to API users (in .env).
--   `stack_name`: (default: `"fastapi-project"`) The name of the stack used for Docker Compose labels and project name (no spaces, no periods) (in .env).
--   `secret_key`: (default: `"changethis"`) The secret key for the project, used for security, stored in .env, you can generate one with the method above.
--   `first_superuser`: (default: `"admin@example.com"`) The email of the first superuser (in .env).
--   `first_superuser_password`: (default: `"changethis"`) The password of the first superuser (in .env).
--   `smtp_host`: (default: "") The SMTP server host to send emails, you can set it later in .env.
--   `smtp_user`: (default: "") The SMTP server user to send emails, you can set it later in .env.
--   `smtp_password`: (default: "") The SMTP server password to send emails, you can set it later in .env.
--   `emails_from_email`: (default: `"info@example.com"`) The email account to send emails from, you can set it later in .env.
--   `postgres_password`: (default: `"changethis"`) The password for the PostgreSQL database, stored in .env, you can generate one with the method above.
--   `sentry_dsn`: (default: "") The DSN for Sentry, if you are using it, you can set it later in .env.
-
-## Backend Development
-
-Backend docs: [backend/README.md](./backend/README.md).
-
-## Frontend Development
-
-Frontend docs: [frontend/README.md](./frontend/README.md).
-
-## Deployment
-
-Deployment docs: [deployment.md](./deployment.md).
-
-## Development
-
-General development docs: [development.md](./development.md).
-
-This includes using Docker Compose, custom local domains, `.env` configurations, etc.
-
-## Release Notes
-
-Check the file [release-notes.md](./release-notes.md).
-
-## License
-
-The Full Stack FastAPI Template is licensed under the terms of the MIT license.
+-   `uv` not `poetry` for python dependency management

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+    {% include 'head.html' %}
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}" />
+    <meta name="keywords" content="{{topic}} performance and health hacking" />
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container" class="wrapper flex-grow-1 pt-5">
+            <div class="row justify-content-center pt-5">
+                <div class="col text-center">
+                    <h1>
+                        DiY Health Research
+                        <p class="lead">science + anecdotal evidence</p>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Google-style search bar -->
+            <div class="row pt-5">
+                <div class="col-md-8 mx-auto">
+                    <form id="search" action="/search" method="get">
+                        <!-- Search bar with shadow -->
+                        <div class="position-relative mb-4">
+                            <div class="input-group shadow-sm">
+                                <span
+                                    class="input-group-text bg-white border-end-0 rounded-start-pill"
+                                >
+                                    <i class="bi bi-search text-secondary"></i>
+                                </span>
+                                <input
+                                    class="form-control border-start-0 rounded-end-pill"
+                                    type="text"
+                                    name="question"
+                                    id="example-search-input"
+                                    required
+                                    placeholder="What's your health problem?"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Google-style buttons centered -->
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <button
+                                class="btn btn-primary py-2 px-3"
+                                type="submit"
+                                id="index-search-button"
+                            >
+                                <span id="index-search-text">Search</span>
+                                <span
+                                    id="index-button-spinner"
+                                    style="
+                                        display: none;
+                                        width: 24px;
+                                        height: 24px;
+                                        vertical-align: middle;
+                                    "
+                                >
+                                    <img
+                                        src="/static/svg-loaders/puff.svg"
+                                        alt="Loading..."
+                                        width="24"
+                                        height="24"
+                                    />
+                                </span>
+                            </button>
+                            <button
+                                class="btn btn-primary py-2 px-3"
+                                type="button"
+                                id="feeling-lucky"
+                                onclick="feelingLuckyWithSpinner()"
+                            >
+                                <span id="index-lucky-text"
+                                    >I'm Feeling Lucky</span
+                                >
+                                <span
+                                    id="index-lucky-spinner"
+                                    style="
+                                        display: none;
+                                        width: 24px;
+                                        height: 24px;
+                                        vertical-align: middle;
+                                    "
+                                >
+                                    <img
+                                        src="/static/svg-loaders/puff.svg"
+                                        alt="Loading..."
+                                        width="24"
+                                        height="24"
+                                    />
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Script for I'm Feeling Lucky button and spinners -->
+            <script>
+                // Show spinner in search button
+                // Force showing spinner immediately in a button
+                function forceShowSpinner(textId, spinnerId) {
+                    const textElement = document.getElementById(textId);
+                    const spinnerElement = document.getElementById(spinnerId);
+
+                    if (textElement && spinnerElement) {
+                        console.log(`Showing spinner ${spinnerId}`);
+                        textElement.style.display = "none";
+                        spinnerElement.style.display = "inline-block";
+                        return true;
+                    } else {
+                        console.log(
+                            `Elements not found for ${textId} or ${spinnerId}`
+                        );
+                        return false;
+                    }
+                }
+
+                // Main function to show spinners on search
+                function showSpinner(fromEvent) {
+                    console.log("showSpinner called");
+                    // Check if the input field has a value
+                    const searchInput = document.getElementById(
+                        "example-search-input"
+                    );
+                    if (!searchInput || !searchInput.value.trim()) {
+                        console.log("No search input value");
+                        return false; // Don't show spinner if no data
+                    }
+
+                    // Force show spinner in search button
+                    forceShowSpinner(
+                        "index-search-text",
+                        "index-button-spinner"
+                    );
+
+                    // Store info in localStorage to show we're waiting for response
+                    localStorage.setItem("spinnerActive", "true");
+                    localStorage.setItem("spinnerTimestamp", Date.now());
+
+                    // Start a special longer timeout since the page will navigate
+                    // We'll check this in a separate function
+                    return true;
+                }
+
+                function hideSpinners() {
+                    // Hide all spinners
+                    if (document.getElementById("index-search-text")) {
+                        document.getElementById(
+                            "index-search-text"
+                        ).style.display = "inline";
+                    }
+                    if (document.getElementById("index-button-spinner")) {
+                        document.getElementById(
+                            "index-button-spinner"
+                        ).style.display = "none";
+                    }
+                    if (document.getElementById("index-lucky-text")) {
+                        document.getElementById(
+                            "index-lucky-text"
+                        ).style.display = "inline";
+                    }
+                    if (document.getElementById("index-lucky-spinner")) {
+                        document.getElementById(
+                            "index-lucky-spinner"
+                        ).style.display = "none";
+                    }
+                }
+
+                // Define the luckyQuestions array once
+                const luckyQuestions = [
+                    "Cancer and Diet",
+                    "ADHD and Diet",
+                    "Anxiety and Diet",
+                    "Low iron during pregnancy",
+                    "how to improve sleep naturally",
+                    "best supplements for mental focus",
+                    "intermittent fasting benefits",
+                    "nootropics for brain health",
+                    "meditation benefits for stress",
+                ];
+
+                // Feeling lucky with spinner
+                function feelingLuckyWithSpinner() {
+                    // First get a random question and set it in the input field
+                    const randomIndex = Math.floor(
+                        Math.random() * luckyQuestions.length
+                    );
+                    const searchInput = document.getElementById(
+                        "example-search-input"
+                    );
+                    searchInput.value = luckyQuestions[randomIndex];
+
+                    // Now that we have a value, show the spinner
+                    forceShowSpinner("index-lucky-text", "index-lucky-spinner");
+
+                    // Store info in localStorage to show we're waiting for response
+                    localStorage.setItem("spinnerActive", "true");
+                    localStorage.setItem("spinnerTimestamp", Date.now());
+
+                    // Submit the form with a slight delay to ensure spinner is visible
+                    setTimeout(function () {
+                        document.getElementById("search").submit();
+                    }, 50);
+                }
+
+                // Reset all spinners function to be called whenever page is loaded or navigated to
+                function resetAllSpinners() {
+                    console.log("Resetting all spinners");
+
+                    // Reset spinner UI elements
+                    if (document.getElementById("index-search-text")) {
+                        document.getElementById(
+                            "index-search-text"
+                        ).style.display = "inline";
+                    }
+                    if (document.getElementById("index-button-spinner")) {
+                        document.getElementById(
+                            "index-button-spinner"
+                        ).style.display = "none";
+                    }
+                    if (document.getElementById("index-lucky-text")) {
+                        document.getElementById(
+                            "index-lucky-text"
+                        ).style.display = "inline";
+                    }
+                    if (document.getElementById("index-lucky-spinner")) {
+                        document.getElementById(
+                            "index-lucky-spinner"
+                        ).style.display = "none";
+                    }
+
+                    // Clear localStorage spinner flags
+                    localStorage.removeItem("spinnerActive");
+                    localStorage.removeItem("spinnerTimestamp");
+                }
+
+                // Call reset function immediately
+                resetAllSpinners();
+
+                // Listen specifically for back button navigation
+                window.addEventListener("popstate", function (event) {
+                    console.log("Back button used, resetting spinners");
+                    resetAllSpinners();
+                });
+
+                // Add event handlers for form submission and clicks
+                document.addEventListener("DOMContentLoaded", function () {
+                    console.log("DOM Content Loaded");
+
+                    // Don't hide spinners on unload - we want them to persist during navigation
+                    // window.addEventListener('beforeunload', hideSpinners);
+
+                    // Add error handler
+                    window.addEventListener("error", function () {
+                        console.log("Error detected, but NOT hiding spinners");
+                        // Don't hide spinners on error - let them persist
+                    });
+
+                    // Handle search form submission
+                    const searchForm = document.getElementById("search");
+                    const searchButton = document.getElementById(
+                        "index-search-button"
+                    );
+
+                    if (searchForm && searchButton) {
+                        console.log("Found search form and button");
+
+                        // Method 1: Form submit event - intercept with capture phase to be first
+                        searchForm.addEventListener(
+                            "submit",
+                            function (event) {
+                                console.log("Form submit event triggered");
+                                // Check if the form is valid
+                                if (!this.checkValidity()) {
+                                    console.log("Form not valid");
+                                    return false;
+                                }
+
+                                // Valid submission, show spinner
+                                console.log("Form valid, showing spinner");
+                                showSpinner();
+
+                                // Add a small delay to ensure spinner shows before navigation
+                                if (event) {
+                                    event.preventDefault();
+                                    setTimeout(function () {
+                                        searchForm.submit();
+                                    }, 100);
+                                    return false;
+                                }
+
+                                return true;
+                            },
+                            true
+                        ); // Using capture phase to intercept early
+
+                        // Method 2: Direct button click event
+                        searchButton.addEventListener(
+                            "click",
+                            function (event) {
+                                console.log("Search button clicked");
+                                const searchInput = document.getElementById(
+                                    "example-search-input"
+                                );
+
+                                if (searchInput && searchInput.value.trim()) {
+                                    // Force show the spinner
+                                    forceShowSpinner(
+                                        "index-search-text",
+                                        "index-button-spinner"
+                                    );
+
+                                    // Store info in localStorage
+                                    localStorage.setItem(
+                                        "spinnerActive",
+                                        "true"
+                                    );
+                                    localStorage.setItem(
+                                        "spinnerTimestamp",
+                                        Date.now()
+                                    );
+                                }
+                            },
+                            true
+                        ); // Using capture phase to intercept early
+                    } else {
+                        console.log("Search form or button not found");
+                    }
+
+                    // Reset all spinners when the page loads (also works for browser back button)
+                    resetAllSpinners();
+
+                    // Also reset spinners when window becomes visible again
+                    document.addEventListener("visibilitychange", function () {
+                        if (document.visibilityState === "visible") {
+                            resetAllSpinners();
+                        }
+                    });
+
+                    // Additional catch: Reset spinners after a short delay
+                    // This helps with back button navigation
+                    setTimeout(resetAllSpinners, 200);
+                });
+            </script>
+            <!-- End Google-style search bar -->
+        </div>
+        <!--container-->
+        {% include 'footer.html' %}
+    </body>
+</html>

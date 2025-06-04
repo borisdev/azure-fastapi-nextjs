@@ -1,0 +1,9 @@
+fixtures/
+*.png
+*.json
+static/images_png/
+store/
+cache_directory/
+deep_experience_results.json
+disk_cache_directory_embedder/
+cache_embeddings/

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+    {% include 'head.html' %}
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}" />
+    <meta name="keywords" content="{{topic}} performance and health hacking" />
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container" class="wrapper flex-grow-1 pt-5">
+            {% include 'headline.html' %}
+
+            <!-- AI search bar row -->
+            <div class="row pt-5">
+                <div class="col mx-auto">
+                    <form
+                        class="d-flex"
+                        id="search"
+                        hx-get="/topic/ai_search_results"
+                        hx-trigger="submit"
+                        hx-target="#search-results"
+                        hx-indicator="#spinner"
+                        hx-trigger="keyup[key=='Enter']"
+                    >
+                        <input
+                            class="search-bar form-control form-control-lg border rounded-pill border border-success"
+                            type="text"
+                            name="question"
+                            id="example-search-input"
+                            placeholder="Ask a biohacking question..."
+                            required
+                        />
+                        <div class="input-group-append">
+                            <button
+                                class="btn btn-outline-success rounded-pill"
+                                type="submit"
+                            >
+                                <i class="bi bi-search fs-5" type="submit"></i>
+                                Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- AI search bar row -->
+
+            <!-- Topics Row -->
+            <hr class="my-4" />
+            <div class="row">
+                <div class="col text-center">
+                    <h2 style="color: #195190ff">Topics</h2>
+                </div>
+            </div>
+            <!-- Topics Row -->
+
+            <!-- Topic list row -->
+            <div class="row" style="padding-top: 30px">
+                <div class="col text-center">
+                    {% for topic in topics %}
+                    <a
+                        class="btn btn-outline-secondary btn-lg rounded-pill me-2 my-1"
+                        role="button"
+                        href="/topic/{{topic.slug}}"
+                        >{{topic.title}}</a
+                    >
+                    {%- endfor %}
+                    <a
+                        class="btn btn-outline-secondary btn-lg rounded-pill me-2 my-1"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        role="button"
+                        >Request a topic</a
+                    >
+                    {% include 'request_topic_modal.html' %}
+                </div>
+            </div>
+            <!-- Topic list row -->
+        </div>
+        <!--container-->
+        {% include 'footer.html' %}
+    </body>
+</html>

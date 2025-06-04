@@ -1,0 +1,66 @@
+{% if "search" in request.url.path %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1 d-none"
+    role="button"
+    href="/topic/{{topic.slug}}/search"
+>
+    Search
+</a>
+{% else %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1"
+    role="button"
+    href="/topic/{{topic.slug}}/search"
+>
+    Search
+</a>
+{% endif %} {% if "summary" in request.url.path %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1 d-none"
+    role="button"
+    href="/topic/{{topic.slug}}/drivers"
+>
+    Drivers
+</a>
+{% else %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1"
+    role="button"
+    href="/topic/{{topic.slug}}/drivers"
+>
+    Drivers
+</a>
+
+{% endif %} {% if "unexpected" in request.url.path %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1 d-none"
+    role="button"
+    href="/topic/{{topic.slug}}/unexpected"
+>
+    Funny/Unexpected
+</a>
+{% else %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1"
+    role="button"
+    href="/topic/{{topic.slug}}/unexpected"
+>
+    Funny/Unexpected
+</a>
+{% endif %} {% if "faqs" in request.url.path %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1 d-none"
+    role="button"
+    href="/topic/{{topic.slug}}/faqs"
+>
+    FAQs
+</a>
+{% else %}
+<a
+    class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1"
+    role="button"
+    href="/topic/{{topic.slug}}/faqs"
+>
+    FAQs
+</a>
+{% endif %}

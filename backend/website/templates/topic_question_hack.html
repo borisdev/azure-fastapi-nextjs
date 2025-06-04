@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+        <title>{{ title }}</title>
+        <meta name="description" content="{{ description }}" />
+        <meta
+            name="keywords"
+            content="{{topic}} performance and health hacking"
+        />
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+        <img
+            src="/images/{{subreddit}}.jpg"
+            class="img-fluid large-img d-block rounded-circle float-end"
+            alt="Sketch of {{subreddit}}"
+        />
+
+        <div class="container-fluid">
+            <div class="container mt-5">
+                <h1 class="display-4">
+                    {{hack.headline}} for hacking ADHD
+
+                    <div class="subtitle">
+                        <img
+                            src="/static/reddit-logo-2436-32px.png"
+                            alt="reddit logo"
+                        />
+                        personal experience results with the source reddit posts
+                    </div>
+                </h1>
+                <p class="lead">{{hack.name}}</p>
+            </div>
+
+            <hr class="my-5" />
+
+            <div class="container">
+                <h2 class="display-6 text-muted"></h2>
+
+                <ol class="list-group list-group-numbered">
+                    {% for causal_relation in hack.causal_relationships %} {%
+                    set post = causal_relation %}
+                    <a
+                        target="about:blank"
+                        rel="nofollow noopener noreferrer"
+                        href="https://reddit.com/permalink"
+                    >
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-start"
+                        >
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{post.outcomes}}</div>
+                            </div>
+                        </li>
+                    </a>
+
+                    {% endfor %}
+                </ol>
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /.container -->
+        {% include 'footer.html' %}
+    </body>
+</html>

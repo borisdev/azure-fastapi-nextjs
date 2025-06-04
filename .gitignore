@@ -1,3 +1,5 @@
+.secret
+.venv
 .vscode
 node_modules/
 /test-results/

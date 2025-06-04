@@ -1,0 +1,23 @@
+// Minimal test file to verify TypeScript loading
+console.log("Test TypeScript file loaded successfully");
+
+// Get the react-root element
+const reactRoot = document.getElementById('react-root');
+
+// Create a simple research report display
+if (reactRoot) {
+  // Clear any existing content
+  reactRoot.innerHTML = '';
+  
+  // Create a simple test message
+  const testDiv = document.createElement('div');
+  testDiv.className = 'alert alert-success';
+  testDiv.innerHTML = '<h3>Test Successful</h3><p>The TypeScript file loaded and executed correctly.</p>';
+  
+  // Add content to the react-root element
+  reactRoot.appendChild(testDiv);
+  
+  console.log("Test message added to react-root element");
+} else {
+  console.error("Could not find react-root element");
+}

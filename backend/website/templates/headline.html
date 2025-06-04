@@ -1,0 +1,37 @@
+            <div class="row justify-content-center pt-5">
+
+                <div class="col text-center">
+
+                    {% if topic is defined %}
+                    <h1>
+                        <span class="display-4"><u class="thin-underline">{{subtopic}} {{topic.title}} </u>Biohacking Experiences</span>
+
+                        
+                        </br>
+                        <img src="/images/{{topic.slug}}.jpg" alt="image of biohack topic" class="img-fluid mr-2 rounded-circle" style="height: 100px;">
+                        </br>
+                    {% else %}
+                    <h1>
+                        <span class="display-4">Search Biohacking Experiences</span>
+                    {% endif %}
+
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <p class="lead">
+                    {% if topic is defined %}
+                        {{subtopic}} {{topic.title}} biohacking experiences shared on Reddit
+                    {% else %}
+                        Search biohacking experiences shared on Reddit
+                    {% endif %}
+                        <img
+                            src="/static/reddit-logo-2436-32px.png"
+                            alt="reddit logo"
+                        />
+                        and reported in clinical studies.
+                    </p>
+                </div>
+            </div>

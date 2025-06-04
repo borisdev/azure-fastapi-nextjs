@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+    {% include 'head.html' %}
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container" class="wrapper flex-grow-1 pt-5">
+            <div class="row justify-content-center pt-5">
+
+                <div class="col text-center">
+
+                    <h1>
+                        <span class="display-5"><u class="thin-underline">{{topic.title}} </u>Biohacking Experiences</span>
+                        </br>
+                        <span class="display-4">{{subtopic}}</span>
+
+                        
+                        </br>
+                        <img src="/images/{{topic.slug}}.jpg" alt="image of biohack topic" class="img-fluid mr-2 rounded-circle" style="height: 100px;">
+                        </br>
+
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <p class="lead">
+                    {{biohack.headline}}
+                    </p>
+                    <p class="lead">
+                    {{biohack.summary}}
+                    </p>
+                </div>
+            </div>
+
+            <hr class="mt-3 mb-3" />
+
+            {% for experience in biohack.experiences %}
+            <div class="row align-items-center">
+                <div class="col">
+                    <p class="lead">{{experience.takeaway}}
+                    <a
+                        class="btn btn-outline-secondary btn-sm rounded-pill me-2 my-1"
+                        role="button"
+                        href={{experience.url}}
+                        target="about:blank"
+                        rel="nofollow noopener noreferrer"
+                    >
+                        <i class="bi bi-link-45deg"></i>
+                        {% if experience.source_type == "reddit" %}
+                        <img
+                            src="/static/reddit-logo-2436-32px.png"
+                            alt="reddit logo"
+                        />
+                        {% elif experience.source_type == "study" %}
+                        <img
+                            src="/static/medrxiv.png"
+                            alt="medrxiv logo"
+                        />
+                        {% endif %}
+                    </a>
+                    </p>
+                    </div>
+            </div>
+            <hr class="mt-1 mb-1" />
+            {% endfor %}
+        </div>
+        <!-- /.container -->
+        {% include 'footer.html' %}
+    </body>
+</html>

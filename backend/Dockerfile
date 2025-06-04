@@ -1,43 +1,55 @@
-FROM python:3.10
+FROM python:3.12-slim as python-base
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_HOME="/opt/poetry" \
+    PYSETUP_PATH="/opt/pysetup" \
+    VENV_PATH="/opt/pysetup/.venv"
+    # reminder of what is inside VENV_PATH: 
+    # /opt/pysetup/.venv/bin/fastapi
 
-ENV PYTHONUNBUFFERED=1
+ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
-WORKDIR /app/
 
-# Install uv
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
+# builder-base is used to build dependencies for building the app
+FROM python-base as builder-base
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+        curl \
+        build-essential
 
-# Place executables in the environment at the front of the path
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
-ENV PATH="/app/.venv/bin:$PATH"
+# Install Poetry - respects $POETRY_VERSION & $POETRY_HOME
+ENV POETRY_VERSION=2.1.1
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Compile bytecode
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
-ENV UV_COMPILE_BYTECODE=1
+# We copy our Python requirements here to cache them
+# and install only runtime deps using poetry
+WORKDIR $PYSETUP_PATH
+COPY ./poetry.lock ./pyproject.toml ./README.md ./
+COPY ./website ./website
+# install runtime dependencies including the local package
+RUN poetry install --only main
 
-# uv Cache
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
-ENV UV_LINK_MODE=copy
+CMD ["tail", "-f", "/dev/null"]
 
-# Install dependencies
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project
 
-ENV PYTHONPATH=/app
+FROM python-base as production
+ENV FASTAPI_ENV=production
+# COPY --from=builder-base /opt/pysetup/.venv/bin/fastapi /opt/pysetup/.venv/bin/fastapi
+# just copy our runtime dependencies from the builder-base, and skip those for building
+COPY --from=builder-base $VENV_PATH $VENV_PATH
 
-COPY ./scripts /app/scripts
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+# RUN poetry install --only root....NO NEED SINCE WE COPY THE VENV FROM BUILDER-BASE
 
-COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
+COPY ./website /website
+WORKDIR /website
 
-COPY ./app /app/app
-
-# Sync the project
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync
-
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+ENTRYPOINT /docker-entrypoint.sh $0 $@
+CMD ["fastapi", "run", "--workers", "4", "website/main.py"]
+EXPOSE 80

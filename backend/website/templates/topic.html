@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+        <style>
+            .search-bar:hover {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container" class="wrapper flex-grow-1 pt-5">
+            {% include 'headline.html' %}
+            <!-- AI search bar row -->
+            <div class="row pt-5">
+                <div class="col mx-auto">
+                    <form
+                        class="d-flex"
+                        id="search"
+                        hx-get="/topic/{{topic.slug}}/search"
+                        hx-trigger="submit"
+                        hx-target="#search-results"
+                        hx-indicator="#spinner"
+                        hx-trigger="keyup[key=='Enter']"
+                    >
+                        <input
+                            class="search-bar form-control form-control-lg border-end-0 border rounded-pill border border-success"
+                            type="text"
+                            name="question"
+                            id="example-search-input"
+                            placeholder="Ask a question about {{topic.title}}..."
+                            required
+                        />
+                        <div class="input-group-append">
+                            <button
+                                class="btn btn-outline-success border-start-0 rounded-pill"
+                                type="submit"
+                            >
+                                <i class="bi bi-search fs-5" type="submit"></i>
+                                Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="search-results" class="mt-5">
+                {% block search_result %} 
+                {% if request.client.host == '172.18.0.1' and should is defined %}
+                <div class="alert alert-warning" role="alert">
+                    <strong>Performance stats</strong><br />
+                    Phrases: <pre>{{ phrases }}</pre>
+                    Parsed question: <pre>{{ parsed_question }}</pre>
+                    Search query: <pre>{{ should | tojson(indent=2) }}</pre>
+                    Direct hits: {{direct_hits}}<br />
+                    Added Indirect hits: {{indirect_hits}}<br />
+                    Elapsed time: {{elapsed_time}} seconds<br />
+                </div>
+                {% endif %}
+
+
+                {% for biohack in biohacks -%}
+
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <p class="lead">
+                            {{biohack.headline}}
+                        </p>
+                        <p class="text-muted">
+                            {{biohack.summary}}
+                        </p>
+
+                            <a
+                                class="btn btn-outline-secondary rounded-pill btn-md me-2 my-1"
+                                role="button"
+                                href="/topic/{{topic.slug}}/biohacks/{{biohack.slug}}"
+                            >
+                                {{biohack.study_count}} studies &
+                                {{biohack.reddit_count}} Reddit posts
+                                <i class="bi bi-link-45deg"></i>
+                            </a>
+                            <span class="text-muted small"
+                                >{{biohack.search_type}}</span
+                            >
+                        </p>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <hr class="mt-1 mb-1" />
+                {% endfor %} {% endblock %}
+            </div>
+            <!-- search-results -->
+        </div>
+        <!-- /.container -->
+        {% include 'footer.html' %}
+    </body>
+</html>

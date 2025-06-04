@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+        <style>
+            .card {
+                margin: 10px;
+            }
+            .fixed-size {
+                width: 250px;
+                height: 250px;
+            }
+        </style>
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="text-center pt-5">
+            <h1>About us</h1>
+
+            <hr class="my-4" />
+        </div>
+
+        <div
+            class="container"
+            class="wrapper flex-grow-1 mb-5"
+            style="max-width: 800px"
+        >
+            <div class="card-deck">
+                <div class="card mb-3" style="max-width: 640px">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img
+                                src="/static/lisa.jpeg"
+                                class="img-fluid rounded-start"
+                                alt="..."
+                            />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Lisa DeMeyere</h5>
+                                <small class="text-muted">MSN, ACNP-BC</small>
+                                <p class="card-text">
+                                    Lisa's experience as a transplant nurse
+                                    practitioner disciplines us to be simple and
+                                    clear.
+                                </p>
+                                <p class="card-footer">
+                                    <a
+                                        href="https://www.linkedin.com/in/lisa-demeyere-358a1651/"
+                                        >LinkedIn</a
+                                    >
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3" style="max-width: 640px">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img
+                                src="/static/jess.jpeg"
+                                class="img-fluid rounded-start"
+                                alt="..."
+                            />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Jessica Johnson</h5>
+                                <small class="text-muted">
+                                    Microbiology (MS), Science and Medical
+                                    Journalism (MS)
+                                </small>
+                                <p class="card-text">
+                                    Jessica's experience as a science writer and
+                                    breast cancer survivor drives us to be
+                                    creative and grounded.
+                                </p>
+                                <p class="card-footer">
+                                    <a
+                                        href="https://www.linkedin.com/in/jessica-p-johnson-716ba4a/"
+                                        >LinkedIn</a
+                                    >
+                                    <br />
+                                    <a
+                                        href="https://www.ornl.gov/staff-profile/jessica-p-johnson"
+                                    >
+                                        Oak Ridge National Laboratory</a
+                                    >
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3" style="max-width: 640px">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img
+                                src="/static/boris.jpeg"
+                                class="img-fluid rounded-start"
+                                alt="..."
+                            />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Boris Dev</h5>
+                                <small class="text-muted">
+                                    Data Science in Human Geography (PhD)
+                                </small>
+                                <p class="card-text">
+                                    Boris is building the software.
+                                </p>
+                                <p class="card-footer">
+                                    <a
+                                        href="https://www.linkedin.com/in/boris-dev/"
+                                        >LinkedIn</a
+                                    >
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- card-deck -->
+        </div>
+        <!--container-->
+        {% include 'footer.html' %}
+    </body>
+</html>

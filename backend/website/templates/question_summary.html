@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% set my_string = "FAQs on Hacking your {topic} | personal stories +
+        clinical results | noBSmed.com" %} {% with title=my_string %} {% include
+        'header.html' %} {% endwith %}
+        <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7322032866808831"
+            crossorigin="anonymous"
+        ></script>
+
+        <style>
+            .small-img {
+                width: 100px;
+            }
+            .medium-img {
+                width: 200px;
+            }
+            .large-img {
+                width: 300px;
+            }
+            .card-body {
+                position: relative;
+                overflow: hidden;
+            }
+        </style>
+        <meta name="description" content="{{my_string}}" />
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container-fluid">
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/topic/{{subreddit}}/questions">Popular questions on {{subreddit}}</a></li>
+  </ol>
+</nav>
+
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="display-6">{{faq.question}}</h1>
+                    <p class="lead text-muted">personal stories + clinical results</p>
+                </div>
+                <div class="col">
+                    <img
+                        src="/images/{{subreddit}}.jpg"
+                        class="img-fluid large-img d-block rounded float-end"
+                        alt="Image of {{topic}}"
+                    />
+                </div>
+            </div>
+
+            <h3 class="display-6 text-muted">Summary</h3>
+            <p class="lead">PLACEHOLDER</p>
+            <hr class="mt-3 mb-3" />
+            <h3 class="display-6 text-muted">Sources</h3>
+            {% for hack in faq.hacks %}
+            <div class="row align-items-center">
+                <div class="col">
+                    <p class="lead">PLACEHOLDER for a hack or a study</p>
+                </div>
+                <div class="col">
+                    <p>{{hack.name}}</p>
+                </div>
+            </div>
+            <hr class="mt-1 mb-1" />
+            {% endfor %}
+            
+        </div>
+        <!-- /.container -->
+        {% include 'footer.html' %}
+    </body>
+</html>
