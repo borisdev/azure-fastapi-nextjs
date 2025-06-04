@@ -1,14 +1,23 @@
 # FastAPI Project - Development
 
-## Docker Compose
+## Pre-requisites
 
-* Start the local stack with Docker Compose:
+```bash
+$docker-compose --version
+Docker Compose version v2.1.1
+# Upgrade if needed to at least version 2.22.0 and later, part of Docker Desktop (mac)
+brew install docker-compose
+$docker-compose --version
+Docker Compose version 2.36.2
+```
+
+## Start
 
 ```bash
 docker compose watch
 ```
 
-* Now you can open your browser and interact with these URLs:
+-   Now you can open your browser and interact with these URLs:
 
 Frontend, built with Docker, with routes handled based on the path: http://localhost:5173
 
