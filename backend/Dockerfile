@@ -51,5 +51,5 @@ COPY ./website /website
 WORKDIR /website
 
 ENTRYPOINT /docker-entrypoint.sh $0 $@
-CMD ["fastapi", "run", "--workers", "4", "website/main.py"]
+CMD ["fastapi", "run", "--workers", "4", "main.py"]
 EXPOSE 80
