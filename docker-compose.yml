@@ -1,7 +1,7 @@
 services:
 
   backend:
-    image: nobs_prod_from_aws
+    image: nobs_backend
     container_name: backend
     # build:
     #   context: ./backend

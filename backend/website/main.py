@@ -13,6 +13,7 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
+
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
 from website.search import (enrich_search_results_chain, new_ai_summary,
                             run_opensearch_query)
@@ -50,32 +51,19 @@ except Exception as e:
 cache: dict[str, Any] = {}
 app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
 
-if web_app_env == "LAPTOP" or web_app_env == "LOCAL":
-    from pathlib import Path
 
-    static_directory = Path(__file__).parent / "static"
-    app.mount("/static", StaticFiles(directory=str(static_directory)), name="static")
-    # app.mount(
-    #     "/images",
-    #     StaticFiles(directory=str(static_directory / "images")),
-    #     name="images",
-    # )
-    templates_directory = Path(__file__).parent / "templates"
-    templates = Jinja2Blocks(directory=str(templates_directory))
-    # <link rel="icon" href="/static/no-bs-logo-144.png" type="image/png" />
-    # favicon_path = os.path.join("images", "favicon.ico")
-    favicon_path = str(static_directory / "favicon.ico")
-else:
-    app.mount(
-        "/static", StaticFiles(directory="/app/website/website/static"), name="static"
-    )
-    # app.mount(
-    #     "/images",
-    #     StaticFiles(directory="/app/website/website/static/images"),
-    #     name="images",
-    # )
-    templates = Jinja2Blocks(directory="/app/website/website/templates")
-    favicon_path = "/app/website/website/static/favicon.ico"
+static_directory = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=str(static_directory)), name="static")
+# app.mount(
+#     "/images",
+#     StaticFiles(directory=str(static_directory / "images")),
+#     name="images",
+# )
+templates_directory = Path(__file__).parent / "templates"
+templates = Jinja2Blocks(directory=str(templates_directory))
+# <link rel="icon" href="/static/no-bs-logo-144.png" type="image/png" />
+# favicon_path = os.path.join("images", "favicon.ico")
+favicon_path = str(static_directory / "favicon.ico")
 
 
 @app.get("/favicon.ico", include_in_schema=False)
