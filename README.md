@@ -71,8 +71,9 @@ nobsmedregistry.azurecr.io
 
 ```bash
 # Build backend and frontend docker images:
-
+cd backend
 docker build --tag nobs_backend --file docker/Dockerfile .
+cd ../frontend
 docker build --tag nobs_frontend --file docker/Dockerfile .
 
 # Tag the images for Azure Container Registry
