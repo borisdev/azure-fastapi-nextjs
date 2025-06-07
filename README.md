@@ -1,5 +1,8 @@
 # Cheatsheet: Azure + FastAPI + NextJS
 
+> [!CAUTION]
+> Don't use this repo is completely under construction.
+
 ## This repo was hacked from looking at these repos
 
 -   From FastAPI maker: [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template)
