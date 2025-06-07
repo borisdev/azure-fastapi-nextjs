@@ -24,47 +24,40 @@
 
 ---
 
-Facts to design around:
+## Design
+
+### Facts to design around:
 
 -   I am a one person developer team.
 -   My intention is to experiment with cutting-edge python language AI tools.
 -   I got an MS Azure start-up grant.
 
-Project specific design principles:
+### Project specific design principles:
 
 -   avoid minimal speed gains for a 1 person team that make debugging harder since I can't call Ghost Busters
--   over-engineering for learning is fine since this is a personal project
--   make it easy to run mix-and-match experiments since that is the key to increasing the quality of the user content
+-   over-engineering for learning is fine since this is a personal project. More specifically, make it easy to run mix-and-match experiments since that is the key to increasing the quality of the user content
 
-Scope reduction:
+### Scope reduction:
 
 -   No Github actions
 -   No Terraform (stick with Azure CLI)
 
 ---
 
-## Deploy steps
+## Deployment
 
-1. Build the images locally
-2. Push the images to cloud registry
-3. Deploy cloud container based on new image in registry
+Steps
 
-> [!IMPORTANT]  
-> A Mac M1 image will not work in the cloud. Use `docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .`
+1. Build the images locally and push the images to your Azure cloud registry
+2. Deploy cloud container that pulls the new image from the Azure cloud registry
 
-Source: [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
-
-Assumptions:
-
--   Azure: Azure CLI installed and your logged into it
--   you have created a resource group in Azure (e.g., for me its `nobsmed`)
+### Docker Images
 
 > [!NOTE]  
 > `nobs` in this doc denotes my personal project's prefixing.
 
----
-
-## Deploy steps
+> [!IMPORTANT]  
+> A Mac M1 image will not work in the cloud. Use `docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .`
 
 ```bash
 cd backend
@@ -93,7 +86,16 @@ az acr repository show-tags --name nobsregistry --repository nobs_backend
 # ]
 ```
 
-#### comment and uncomment the lines in azure-container-app.sh
+### Azure Container App Deploy
+
+Source: [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
+
+comment and uncomment the lines in azure-container-app.sh
+
+Assumptions:
+
+-   Azure: Azure CLI installed and your logged into it
+-   you have created a resource group in Azure (e.g., for me its `nobsmed`)
 
 ```bash
 ./azure-container-app.sh
