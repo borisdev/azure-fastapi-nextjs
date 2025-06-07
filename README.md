@@ -35,7 +35,7 @@
 ### Project specific design principles:
 
 -   avoid minimal speed gains for a 1 person team that make debugging harder since I can't call Ghost Busters
--   over-engineering for learning is fine since this is a personal project. More specifically, make it easy to run mix-and-match experiments since that is the key to increasing the quality of the user content
+-   over-engineering for learning is fine since this is a personal project. More specifically, make it easy to run mix-and-match experiments since that is the key to increasing the quality of the user content by trying out the new AI tools.
 
 ### Scope reduction:
 
