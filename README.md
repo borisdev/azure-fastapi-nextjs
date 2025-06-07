@@ -20,8 +20,8 @@
 
 ## Upcoming stack changes
 
--   `uv` for rapid python experiments - each deployment branch is composed of diff combos of packages sourced from other branches
--   git submodules - for flip-flopping between diff frontends w/ each deployment branch experiment
+-   `uv` allows each backend deployment to combine python packages sourced from other branches
+-   `git submodules` - allows A/B testing deployments by simply changing frontend commits and keeping backend same
 -   Backend: [Fast API - LangGraph Platform](https://www.langchain.com/langgraph-platform))
 -   Frontend: Next.js, React components, Tailwind CSS, TypeScript
 
