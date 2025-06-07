@@ -1,7 +1,7 @@
 # Cheatsheet: Azure + FastAPI + NextJS
 
 > [!CAUTION]
-> Don't use this repo is completely under construction.
+> Don't use this repo. It is completely under construction.
 
 ## This repo was hacked from looking at these repos
 
