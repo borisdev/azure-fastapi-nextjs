@@ -43,6 +43,7 @@ opentelemetry-instrumentation-sqlite3 = "^0.52b0"
 opentelemetry-instrumentation-aiohttp-client = "^0.52b0"
 opentelemetry-instrumentation-httpx = "^0.52b0"
 opentelemetry-instrumentation-urllib = "^0.52b0"
+azure-search-documents = "^11.5.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.5"

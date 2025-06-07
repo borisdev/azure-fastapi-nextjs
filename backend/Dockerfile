@@ -51,7 +51,10 @@ COPY ./website /website
 WORKDIR /website
 
 ENTRYPOINT /docker-entrypoint.sh $0 $@
-# CMD ["fastapi", "run", "--workers", "4", "main.py"]
-# CMD ["fastapi", "run", "--workers", "2", "main.py"]
-CMD ["fastapi", "dev" , "main.py", "--host=0.0.0.0", "--port=80", "--reload"]
+# NO WORKED CMD ["fastapi", "run", "--workers", "4", "main.py"]
+# NO WORKED CMD ["fastapi", "run", "--workers", "2", "main.py"]
+# WORKED CMD ["fastapi", "dev" , "main.py", "--host=0.0.0.0", "--port=80", "--reload"]
+# EXPOSE 80
+CMD ["fastapi", "run", "main.py", "--proxy-headers", "--host=0.0.0.0", "--port", "80"]
 EXPOSE 80
+EXPOSE 443
