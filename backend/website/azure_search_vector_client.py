@@ -17,23 +17,21 @@ from langchain_openai import AzureOpenAIEmbeddings
 from rich import print
 
 load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret file
-index_name = "hotels-index"
+credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 
 openai_large = AzureOpenAIEmbeddings(
+    # Usage examples:
     # vector = openai_large.embed_query(text)
     # vectors = openai_large.embed_documents(input_texts)
     azure_deployment="text-embedding-3-large",
     openai_api_version="2024-02-01",  # pyright: ignore
-    azure_endpoint="https://boris-m3ndov9n-eastus2.cognitiveservices.azure.com/",
-    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    azure_endpoint="https://openai-rg-nobsmed.openai.azure.com/",
+    api_key=os.environ["API_KEY"],
 )
 
 azure_search_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 azure_search_key = os.environ["AZURE_SEARCH_API_KEY"]
-azure_search_client = SearchClient(
-    azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
-)
-
 fields = [
     SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
     SearchableField(
@@ -67,12 +65,9 @@ vector_search_config = VectorSearch(
     ],
     algorithms=[HnswAlgorithmConfiguration(name="my-algorithms-config")],
 )
-search_index = SearchIndex(
-    name=index_name, fields=fields, vector_search=vector_search_config
-)
 
 
-docs = [
+hotels = [
     {
         "hotelId": "1",
         "hotelName": "Fancy Stay",
@@ -104,57 +99,56 @@ docs = [
         "category": "Boutique",
     },
 ]
-embedd_docs = []
-for doc in docs:
-    embedd_docs.append(
-        {
-            "hotelId": doc["hotelId"],
-            "hotelName": doc["hotelName"],
-            "description": doc["description"],
-            "category": doc["category"],
-            "descriptionVector": openai_large.embed_query(doc["description"]),
-        }
+for hotel in hotels:
+    hotel["descriptionVector"] = openai_large.embed_query(hotel["description"])
+
+
+if __name__ == "__main__":
+    index_name = "hotels-index"
+    index_client = SearchIndexClient(service_endpoint, credential)
+    index_client.create_index(
+        SearchIndex(name=index_name, fields=fields, vector_search=vector_search_config)
+    )
+    search_client = SearchClient(
+        azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
+    )
+    search_client.upload_documents(documents=hotels)
+    query = "Top hotels in town"
+    query_vector = openai_large.embed_query(query)
+
+    vector_query = VectorizedQuery(
+        vector=query_vector, k_nearest_neighbors=3, fields="descriptionVector"
     )
 
+    results = search_client.search(
+        vector_queries=[vector_query],
+        select=["hotelId", "hotelName"],
+    )
 
-query = "Top hotels in town"
-query_vector = openai_large.embed_query(query)
+    for result in results:
+        print(result)
 
-vector_query = VectorizedQuery(
-    vector=query_vector, k_nearest_neighbors=3, fields="descriptionVector"
-)
+    results = search_client.search(
+        search_text="",
+        vector_queries=[vector_query],
+        filter="category eq 'Luxury'",
+        select=["hotelId", "hotelName"],
+    )
 
-results = azure_search_client.search(
-    vector_queries=[vector_query],
-    select=["hotelId", "hotelName"],
-)
+    for result in results:
+        print(result)
 
-for result in results:
-    print(result)
+    vector_query = VectorizedQuery(
+        vector=openai_large.embed_query(query),
+        k_nearest_neighbors=3,
+        fields="descriptionVector",
+    )
 
+    results = search_client.search(
+        search_text=query,
+        vector_queries=[vector_query],
+        select=["hotelId", "hotelName"],
+    )
 
-results = azure_search_client.search(
-    search_text="",
-    vector_queries=[vector_query],
-    filter="category eq 'Luxury'",
-    select=["hotelId", "hotelName"],
-)
-
-for result in results:
-    print(result)
-
-
-vector_query = VectorizedQuery(
-    vector=openai_large.embed_query(query),
-    k_nearest_neighbors=3,
-    fields="descriptionVector",
-)
-
-results = azure_search_client.search(
-    search_text=query,
-    vector_queries=[vector_query],
-    select=["hotelId", "hotelName"],
-)
-
-for result in results:
-    print(result)
+    for result in results:
+        print(result)

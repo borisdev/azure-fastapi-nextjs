@@ -1,28 +1,3 @@
-# coding: utf-8
-
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-"""
-https://learn.microsoft.com/en-us/python/api/overview/azure/search-documents-readme?view=azure-python#querying
-https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_vector_search.py
-
-
-FILE: sample_vector_search.py
-DESCRIPTION:
-    This sample demonstrates how to get search results from a basic search text
-    from an Azure Search index.
-USAGE:
-    python sample_vector_search.py
-
-    Set the environment variables with your own values before running the sample:
-    1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
-    2) AZURE_SEARCH_INDEX_NAME - the name of your search index (e.g. "hotels-sample-index")
-    3) AZURE_SEARCH_API_KEY - your search API key
-"""
-
 import os
 
 from azure.core.credentials import AzureKeyCredential
@@ -35,22 +10,7 @@ load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret fi
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
-
-
-def get_embeddings(text: str):
-    # There are a few ways to get embeddings. This is just one example.
-    import openai
-
-    open_ai_endpoint = os.getenv("OpenAIEndpoint")
-    open_ai_key = os.getenv("OpenAIKey")
-
-    client = openai.AzureOpenAI(
-        azure_endpoint=open_ai_endpoint,
-        api_key=open_ai_key,
-        api_version="2023-09-01-preview",
-    )
-    embedding = client.embeddings.create(input=[text], model="text-embedding-ada-002")
-    return embedding.data[0].embedding
+index_name = "hotels-index-2"  # You can change this to any name you prefer
 
 
 def get_hotel_index(name: str):
