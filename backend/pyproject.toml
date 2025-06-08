@@ -7,7 +7,7 @@ readme = "README.md"
 package-mode = true
 packages = [{include = "*", from = "website"}]
 
-[tool.poetry.dependencies]
+[poetry.group.dev.dependencies]
 python = ">=3.12,<3.13"
 python-dotenv = "^1.0.1"
 loguru = "^0.7.2"
@@ -44,6 +44,9 @@ opentelemetry-instrumentation-aiohttp-client = "^0.52b0"
 opentelemetry-instrumentation-httpx = "^0.52b0"
 opentelemetry-instrumentation-urllib = "^0.52b0"
 azure-search-documents = "^11.5.2"
+azure-identity = "^1.23.0"
+langchain-community = "^0.3.24"
+langchain-openai = "^0.3.21"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.5"
