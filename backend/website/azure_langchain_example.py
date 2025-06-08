@@ -1,9 +1,6 @@
 import asyncio
 import io
 import os
-# Suppress the specific asyncio warning from AzureSearch destructor
-import sys
-import warnings
 
 from dotenv import load_dotenv
 from langchain_community.document_loaders import TextLoader
@@ -12,15 +9,8 @@ from langchain_openai import AzureOpenAIEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from rich import print
 
+# Suppress the specific asyncio warning from AzureSearch destructor
 
-# Redirect stderr temporarily to suppress the exception output
-class NullWriter(io.StringIO):
-    def write(self, txt):
-        pass
-
-
-# Store original stderr
-original_stderr = sys.stderr
 
 load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret file
 
