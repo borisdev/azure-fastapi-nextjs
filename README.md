@@ -3,6 +3,12 @@
 > [!CAUTION]
 > Don't use this repo. It is completely under construction.
 
+### Assumptions
+
+-   Docker setup
+-   Poetry setup
+-   Azure CLI SDK setup, with a resource group created
+
 ## Stack
 
 ### Now
@@ -16,24 +22,16 @@
 
 -   `uv` allows each backend deployment to combine python packages sourced from other branches
 -   `git submodules` - allows A/B testing deployments by simply changing frontend commits and keeping backend same
--   Backend: [Fast API - LangGraph Platform](https://www.langchain.com/langgraph-platform))
+-   Backend: [Fast API - LangGraph Platform](https://www.langchain.com/langgraph-platform)
 -   Frontend: Next.js, React components, Tailwind CSS, TypeScript
 
 ---
 
-## Design considerations
-
-### Constraints
+## Design
 
 -   Scale for a one person developer team.
 -   Use the MS Azure start-up grant.
-
-### Balance
-
 -   balance automation's speed against automation's risk of harder debugging
-
-### Scope reduction
-
 -   Delay Github actions
 -   Delay Terraform
 
@@ -41,7 +39,7 @@
 
 ## Build + Deploy
 
-### Overview: How local docker builds are deployed to Azure Cloud
+### Overview
 
 -   We deploy the app using Azure Container Apps service, which depends on ...
 -   Azure Container service pulling a new image from the Azure cloud registry, which depends on...
@@ -81,24 +79,6 @@ az acr repository show-tags --name nobsregistry --repository nobs_backend
 # [
 #   "aws_prod"
 # ]
-```
-
-### Azure Deploy
-
-Assumptions:
-
--   Azure: Azure CLI installed and your logged into it
--   you have created a resource group in Azure (e.g., for me its `nobsmed`)
-
-Run scripts in `azure_deploy` folder to create and hydrate the Azure resources:
-
-```bash
-ls azure_deploy
- create_api_app_container_service.sh
- create_docker_image_registry.sh
- create_search_service.sh
- search_add_index.py
- search_add_jsons.py
 ```
 
 ### References
