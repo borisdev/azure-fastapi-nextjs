@@ -3,12 +3,6 @@
 > [!CAUTION]
 > Don't use this repo. It is completely under construction.
 
-## This repo was hacked from looking at these repos
-
--   From FastAPI maker: [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template)
--   From NextJS makers: [Vercel Labs's ai-sdk-preview-python-streaming](https://github.com/vercel-labs/ai-sdk-preview-python-streaming)
--   [From Vinta Software (uses `uv` for python package management)](https://github.com/vintasoftware/nextjs-fastapi-template)
-
 ## Current Stack
 
 -   Poetry
@@ -112,3 +106,6 @@ ls azure_deploy
 ### References
 
 -   [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
+-   From FastAPI maker: [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template)
+-   From NextJS makers: [Vercel Labs's ai-sdk-preview-python-streaming](https://github.com/vercel-labs/ai-sdk-preview-python-streaming)
+-   [From Vinta Software (uses `uv` for python package management)](https://github.com/vintasoftware/nextjs-fastapi-template)
