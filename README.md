@@ -47,14 +47,16 @@
 
 ---
 
-## Deployment
+## Build + Deploy
 
-Steps
+### Overview: How local docker builds are deployed to Azure Cloud
 
-1. Build the images locally and push the images to your Azure cloud registry
-2. Deploy cloud container that pulls the new image from the Azure cloud registry
+-   We deploy the app using Azure Container Apps service, which depends on ...
+-   Azure Container service pulling a new image from the Azure cloud registry, which depends on...
+-   Azure cloud registry being hydrated with the latest images, which depends on...
+-   Locally we build the images first, and then push the images to the registry
 
-### Docker Images
+### Build Docker Images
 
 > [!NOTE]  
 > `nobs` in this doc denotes my personal project's prefixing.
@@ -89,17 +91,24 @@ az acr repository show-tags --name nobsregistry --repository nobs_backend
 # ]
 ```
 
-### Azure Container App Deploy
-
-Source: [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
-
-comment and uncomment the lines in azure-container-app.sh
+### Azure Deploy
 
 Assumptions:
 
 -   Azure: Azure CLI installed and your logged into it
 -   you have created a resource group in Azure (e.g., for me its `nobsmed`)
 
+Run scripts in `azure_deploy` folder to create and hydrate the Azure resources:
+
 ```bash
-./azure-container-app.sh
+ls azure_deploy
+ create_api_app_container_service.sh
+ create_docker_image_registry.sh
+ create_search_service.sh
+ search_add_index.py
+ search_add_jsons.py
 ```
+
+### References
+
+-   [Azure Container Registry for launch in Azure Container Apps.](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr#create-azure-container-registry)
