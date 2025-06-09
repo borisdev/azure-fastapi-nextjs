@@ -8,7 +8,7 @@ from typing import Any, Optional, Union
 
 from loguru import logger
 from pydantic import BaseModel
-from website.settings import console
+from website.settings import ETL_STORE_DIR, console
 
 
 class SubredditAttributes(BaseModel):

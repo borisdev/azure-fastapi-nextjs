@@ -8,6 +8,7 @@ from rich import print
 from rich.console import Console
 from rich.theme import Theme
 
+ETL_STORE_DIR = "/Users/borisdev/workspace/nobsmed/data/etl_store"
 custom_theme = Theme({"info": "dim cyan", "warning": "magenta", "danger": "bold red"})
 console = Console(theme=custom_theme)
 
