@@ -14,8 +14,10 @@ from azure.search.documents.models import VectorizedQuery
 from dotenv import load_dotenv
 # from langchain_community.vectorstores.azuresearch import AzureSearch
 from langchain_openai import AzureOpenAIEmbeddings
+from loguru import logger
 from rich import print
 
+load_dotenv(dotenv_path=".env")  # Load environment variables from .secret file
 load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret file
 credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
@@ -45,7 +47,7 @@ fields = [
         name="descriptionVector",
         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
         searchable=True,
-        vector_search_dimensions=1536,
+        vector_search_dimensions=3072,
         vector_search_profile_name="my-vector-config",
     ),
     SearchableField(
@@ -67,52 +69,68 @@ vector_search_config = VectorSearch(
 )
 
 
-hotels = [
-    {
-        "hotelId": "1",
-        "hotelName": "Fancy Stay",
-        "description": "Best hotel in town if you like luxury hotels.",
-        "category": "Luxury",
-    },
-    {
-        "hotelId": "2",
-        "hotelName": "Roach Motel",
-        "description": "Cheapest hotel in town. Infact, a motel.",
-        "category": "Budget",
-    },
-    {
-        "hotelId": "3",
-        "hotelName": "EconoStay",
-        "description": "Very popular hotel in town.",
-        "category": "Budget",
-    },
-    {
-        "hotelId": "4",
-        "hotelName": "Modern Stay",
-        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
-        "category": "Luxury",
-    },
-    {
-        "hotelId": "5",
-        "hotelName": "Secret Point",
-        "description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
-        "category": "Boutique",
-    },
-]
-for hotel in hotels:
-    hotel["descriptionVector"] = openai_large.embed_query(hotel["description"])
-
-
-if __name__ == "__main__":
-    index_name = "hotels-index"
+def upload_documents(*, index_name: str):
     index_client = SearchIndexClient(service_endpoint, credential)
-    index_client.create_index(
-        SearchIndex(name=index_name, fields=fields, vector_search=vector_search_config)
-    )
+    try:
+        index_client.create_index(
+            SearchIndex(
+                name=index_name, fields=fields, vector_search=vector_search_config
+            )
+        )
+    except Exception as e:
+        print(f"Index creation failed: {e}")
+
+    hotels = [
+        {
+            "hotelId": "1",
+            "hotelName": "Fancy Stay",
+            "description": "Best hotel in town if you like luxury hotels.",
+            "category": "Luxury",
+        },
+        {
+            "hotelId": "2",
+            "hotelName": "Roach Motel",
+            "description": "Cheapest hotel in town. Infact, a motel.",
+            "category": "Budget",
+        },
+        {
+            "hotelId": "3",
+            "hotelName": "EconoStay",
+            "description": "Very popular hotel in town.",
+            "category": "Budget",
+        },
+        {
+            "hotelId": "4",
+            "hotelName": "Modern Stay",
+            "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+            "category": "Luxury",
+        },
+        {
+            "hotelId": "5",
+            "hotelName": "Secret Point",
+            "description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
+            "category": "Boutique",
+        },
+    ]
+    for hotel in hotels:
+        hotel["descriptionVector"] = openai_large.embed_query(hotel["description"])
     search_client = SearchClient(
         azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
     )
-    search_client.upload_documents(documents=hotels)
+    try:
+        result = search_client.upload_documents(documents=hotels)
+        if result:
+            logger.info(f"Documents uploaded successfully: {result}")
+        else:
+            logger.warning("No documents were uploaded.")
+    except Exception as e:
+        logger.error(f"Failed to upload documents: {e}")
+
+
+def test_search_works(*, index_name: str):
+    search_client = SearchClient(
+        azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
+    )
     query = "Top hotels in town"
     query_vector = openai_large.embed_query(query)
 
@@ -152,3 +170,9 @@ if __name__ == "__main__":
 
     for result in results:
         print(result)
+
+
+if __name__ == "__main__":
+    index_name = "hotels-index-3"
+    upload_documents(index_name=index_name)
+    test_search_works(index_name=index_name)
