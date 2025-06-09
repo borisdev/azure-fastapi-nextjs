@@ -1,67 +1,69 @@
-[tool.poetry]
+[project]
 name = "website"
 version = "0.1.0"
 description = ""
-authors = ["Boris Dev <help@nobsmed.com>"]
 readme = "README.md"
-package-mode = true
-packages = [{include = "*", from = "website"}]
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "loguru>=0.7.2",
+    "better-exceptions>=0.3.3",  
+    "colored-traceback>=0.3.0",
+    "pydantic>=2.7.1",
+    "fastapi[standard]>=0.115.12",
+    "uvicorn[standard]>=0.32.0",
+    "jinja2-fragments>=1.3.0",
+    "pretty-errors>=1.2.25",
+    "httpx>=0.28.1",
+    "jsonref>=1.1.0",
+    "markdown>=3.7",
+    "httpcore>=1.0.5",
+    "redis>=5.0.8",
+    "python-slugify>=8.0.4",
+    "praw>=7.7.1",
+    "more-itertools>=10.5.0",
+    "pympler>=1.1",
+    "opensearch-dsl>=2.1.0",
+    "instructor>=1.7.0",
+    "openai>=1.58.1",
+    "nest-asyncio>=1.6.0",
+    "pydantic-ai[examples,logfire]>=0.0.43",
+    "logfire[fastapi]>=3.7.0",
+    "opentelemetry-instrumentation-asgi>=0.52b0",
+    "google-genai>=1.5.0",
+    "opentelemetry-instrumentation-jinja2>=0.52b0",
+    "opentelemetry-instrumentation-starlette>=0.52b0",
+    "opentelemetry-instrumentation-requests>=0.52b0",
+    "opentelemetry-instrumentation-urllib3>=0.52b0",
+    "opentelemetry-instrumentation-sqlite3>=0.52b0",
+    "opentelemetry-instrumentation-aiohttp-client>=0.52b0",
+    "opentelemetry-instrumentation-httpx>=0.52b0",
+    "opentelemetry-instrumentation-urllib>=0.52b0",
+    "azure-search-documents>=11.5.2",
+    "azure-identity>=1.23.0",
+    "langchain-community>=0.3.24",
+    "langchain-openai>=0.3.21"
+]
 
-[poetry.group.dev.dependencies]
-python = ">=3.12,<3.13"
-python-dotenv = "^1.0.1"
-loguru = "^0.7.2"
-better-exceptions = "^0.3.3"
-colored-traceback = "^0.3.0"
-pydantic = "^2.7.1"
-fastapi = {extras = ["standard"], version = "^0.115.12"}
-uvicorn = {extras = ["standard"], version = "^0.32.0"}
-jinja2-fragments = "^1.3.0"
-pretty-errors = "^1.2.25"
-httpx = "^0.28.1"
-jsonref = "^1.1.0"
-markdown = "^3.7"
-httpcore = "^1.0.5"
-redis = "^5.0.8"
-python-slugify = "^8.0.4"
-praw = "^7.7.1"
-more-itertools = "^10.5.0"
-pympler = "^1.1"
-opensearch-dsl = "^2.1.0"
-instructor = "^1.7.0"
-openai = "^1.58.1"
-nest-asyncio = "^1.6.0"
-pydantic-ai = {extras = ["examples", "logfire"], version = "^0.0.43"}
-logfire = {extras = ["fastapi"], version = "^3.7.0"}
-opentelemetry-instrumentation-asgi = "^0.52b0"
-google-genai = "^1.5.0"
-opentelemetry-instrumentation-jinja2 = "^0.52b0"
-opentelemetry-instrumentation-starlette = "^0.52b0"
-opentelemetry-instrumentation-requests = "^0.52b0"
-opentelemetry-instrumentation-urllib3 = "^0.52b0"
-opentelemetry-instrumentation-sqlite3 = "^0.52b0"
-opentelemetry-instrumentation-aiohttp-client = "^0.52b0"
-opentelemetry-instrumentation-httpx = "^0.52b0"
-opentelemetry-instrumentation-urllib = "^0.52b0"
-azure-search-documents = "^11.5.2"
-azure-identity = "^1.23.0"
-langchain-community = "^0.3.24"
-langchain-openai = "^0.3.21"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.5",
+    "random-word>=1.0.13",
+    "diskcache>=5.6.3",
+    "pillow>=11.0.0",
+    "scikit-learn>=1.6.0",
+    "sentence-transformers>=3.3.1",
+    "datasets>=3.2.0",
+    "ipdb>=0.13.13",
+    "pytest-doctestplus>=1.4.0",
+    "pytest-sugar>=1.0.0",
+    "ipython>=8.26.0",
+    "numpy==1.26.4"
+]
 
-[tool.poetry.dev-dependencies]
-pytest = "^8.3.5"
-random-word = "^1.0.13"
-diskcache = "^5.6.3"
-pillow = "^11.0.0"
-scikit-learn = "^1.6.0"
-sentence-transformers = "^3.3.1"
-datasets = "^3.2.0"
-ipdb = "^0.13.13"
-pytest-doctestplus = "^1.4.0"
-pytest-sugar = "^1.0.0"
-en_core_web_sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz"}
-ipython = "^8.26.0"
-numpy = "1.26.4"
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["website*"]
 
 [build-system]
 requires = ["poetry-core"]

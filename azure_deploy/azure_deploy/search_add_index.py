@@ -173,6 +173,13 @@ def test_search_works(*, index_name: str):
 
 
 if __name__ == "__main__":
+    import sys
+
+    print(sys.path)
+    breakpoint()
+
+    import website
+
     index_name = "hotels-index-3"
     upload_documents(index_name=index_name)
     test_search_works(index_name=index_name)
