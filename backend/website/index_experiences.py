@@ -12,7 +12,6 @@ from opensearchpy.helpers import field
 from rich import print
 from rich.traceback import install
 from tqdm import tqdm
-
 from website.biohacks import TopicExperiences
 from website.experiences import Experience
 from website.settings import console, opensearch_client
