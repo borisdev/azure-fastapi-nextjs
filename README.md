@@ -3,16 +3,16 @@
 > [!CAUTION]
 > Don't use this repo. It is completely under construction.
 
-## Current Stack
+## Stack
+
+### Now
 
 -   Poetry
 -   Docker multi-stage builds
--   Backend: FastAPI serving HTMX and Typescript
--   OpenSearch DB
--   Azure Registry
--   Azure Container app
+-   Backend: FastAPI serving fronted: HTMX and Typescript
+-   Azure Cloud: Search, Container Registry, and Container Apps
 
-## Upcoming stack changes
+## In progress
 
 -   `uv` allows each backend deployment to combine python packages sourced from other branches
 -   `git submodules` - allows A/B testing deployments by simply changing frontend commits and keeping backend same
@@ -21,23 +21,21 @@
 
 ---
 
-## Design
+## Design considerations
 
-### Facts to design around:
+### Constraints
 
--   I am a one person developer team.
--   My intention is to experiment with cutting-edge python language AI tools.
--   I got an MS Azure start-up grant.
+-   Scale for a one person developer team.
+-   Use the MS Azure start-up grant.
 
-### Project specific design principles:
+### Balance
 
--   avoid minimal speed gains for a 1 person team that make debugging harder since I can't call Ghost Busters
--   over-engineering for learning is fine since this is a personal project. More specifically, make it easy to run mix-and-match experiments since that is the key to increasing the quality of the user content by trying out the new AI tools.
+-   balance automation's speed against automation's risk of harder debugging
 
-### Scope reduction:
+### Scope reduction
 
--   No Github actions
--   No Terraform (stick with Azure CLI)
+-   Delay Github actions
+-   Delay Terraform
 
 ---
 
