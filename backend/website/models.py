@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import base64
 from enum import Enum
 from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 
 class AISummary(BaseModel):
@@ -83,6 +84,7 @@ class Experience(BaseModel):
             raise ValueError("Outcomes score is None")
         return self.action_score + self.outcomes_score
 
+    @computed_field
     @property
     def source_type(self) -> str:
         if "10." in self.permalink:
@@ -90,6 +92,7 @@ class Experience(BaseModel):
         else:
             return "reddit"
 
+    @computed_field
     @property
     def url(self) -> str:
         if self.source_type == "study":
@@ -100,6 +103,13 @@ class Experience(BaseModel):
             raise ValueError(
                 f"Not implememted yet to make URL for this source type {self.source_type}"
             )
+
+    @computed_field
+    @property
+    def key(self) -> bytes:
+        data_bytes = self.permalink.encode("utf-8")
+        encoded_bytes = base64.urlsafe_b64encode(data_bytes)
+        return encoded_bytes
 
     def valid_biohack(self, *, action_score: int, outcomes_score: int) -> bool:
         if (

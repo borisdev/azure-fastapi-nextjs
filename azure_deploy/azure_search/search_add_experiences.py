@@ -12,15 +12,19 @@ from azure.search.documents.indexes.models import (HnswAlgorithmConfiguration,
                                                    VectorSearch,
                                                    VectorSearchProfile)
 from azure.search.documents.models import VectorizedQuery
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 # from langchain_community.vectorstores.azuresearch import AzureSearch
 from langchain_openai import AzureOpenAIEmbeddings
 from loguru import logger
+from pydantic import BaseModel
 from rich import print
 from tqdm import tqdm
 
-load_dotenv(dotenv_path=".env")  # Load environment variables from .secret file
-load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret file
+# load_dotenv(dotenv_path=".env")  # Load environment variables from .secret file
+# parent parent
+load_dotenv(find_dotenv(".env"))
+load_dotenv(find_dotenv(".secret"))
+# load_dotenv(dotenv_path=".secret")  # Load environment variables from .secret file
 credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 
@@ -38,93 +42,146 @@ azure_search_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 azure_search_key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
-# class ExperienceDoc4(Document):
-#     permalink = Keyword(index=False)
-#     url = Keyword(index=False)
-#     source_type = Keyword()
-#     action = Text(analyzer="english")
-#     health_disorder = Text(analyzer="english")
-#     outcomes = Text(analyzer="english")
-#     personal_context = Text(analyzer="english")
-#     mechanism = Text(analyzer="english")
-#     biohack_type = Keyword()
-#     biohack_topic = Keyword()
-#     action_score = Integer()
-#     outcomes_score = Integer()
-#
-#     @classmethod
-#     def from_pydantic(cls, experience: Experience) -> ExperienceDoc4:
-#         return cls(
-#             **experience.model_dump(
-#                 include={
-#                     "permalink",
-#                     "url",
-#                     "source_type",
-#                     "action",
-#                     "health_disorder",
-#                     "outcomes",
-#                     "personal_context",
-#                     "mechanism",
-#                     "biohack_type",
-#                     "action_score",
-#                     "outcomes_score",
-#                     "biohack_topic",
-#                 }
-#             ),
-#             # source_type=experience.source_type,
-#         )
-#
-def create_index():
-    fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SearchableField(
-            name="hotelName",
-            type=SearchFieldDataType.String,
-            sortable=True,
-            filterable=True,
-        ),
-        SearchableField(name="description", type=SearchFieldDataType.String),
-        SearchField(
-            name="descriptionVector",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-            searchable=True,
-            vector_search_dimensions=3072,
-            vector_search_profile_name="my-vector-config",
-        ),
-        SearchableField(
-            name="category",
-            type=SearchFieldDataType.String,
-            sortable=True,
-            filterable=True,
-            facetable=True,
-        ),
-    ]
-    vector_search_config = VectorSearch(
-        profiles=[
-            VectorSearchProfile(
-                name="my-vector-config",
-                algorithm_configuration_name="my-algorithms-config",
-            )
-        ],
-        algorithms=[HnswAlgorithmConfiguration(name="my-algorithms-config")],
-    )
-    index_client = SearchIndexClient(service_endpoint, credential)
-    try:
-        index_client.create_index(
-            SearchIndex(
-                name=index_name, fields=fields, vector_search=vector_search_config
-            )
+class ExperienceV0(BaseModel):
+    key: str
+    permalink: str
+    url: str
+    source_type: str
+    action_score: int
+    outcomes_score: int
+    action: str
+    health_disorder: str
+    outcomes: str
+    # personal_context: str
+    mechanism: str
+    biohack_type: str
+    biohack_topic: str
+
+    @classmethod
+    def create_index(cls, *, index_name: str):
+        logger.info(f"Creating index: {index_name}")
+        fields = [
+            SimpleField(
+                name="key",
+                type=SearchFieldDataType.String,
+                key=True,
+                filterable=False,
+            ),
+            SimpleField(
+                name="permalink",
+                type=SearchFieldDataType.String,
+                key=False,
+                filterable=True,
+            ),
+            SimpleField(
+                name="url", type=SearchFieldDataType.String, key=False, filterable=True
+            ),
+            SimpleField(
+                name="source_type",
+                type=SearchFieldDataType.String,
+                key=False,
+                filterable=True,
+                facetable=True,
+            ),
+            SimpleField(
+                name="action_score",
+                type=SearchFieldDataType.Int32,
+                key=False,
+                sortable=True,
+            ),
+            SimpleField(
+                name="outcomes_score",
+                type=SearchFieldDataType.Int32,
+                key=False,
+                sortable=True,
+            ),
+            SearchableField(
+                name="action",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=False,
+            ),
+            SearchableField(
+                name="health_disorder",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=False,
+            ),
+            SearchableField(
+                name="outcomes",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=False,
+            ),
+            SearchableField(
+                name="personal_context",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=False,
+            ),
+            SearchableField(
+                name="mechanism",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=False,
+            ),
+            SearchableField(
+                name="biohack_type",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=True,
+            ),
+            SearchableField(
+                name="biohack_topic",
+                type=SearchFieldDataType.String,
+                sortable=False,
+                filterable=True,
+                facetable=True,
+            ),
+            SearchField(
+                name="health_disorderVector",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                searchable=True,
+                vector_search_dimensions=3072,
+                vector_search_profile_name="my-vector-config",
+            ),
+        ]
+        vector_search_config = VectorSearch(
+            profiles=[
+                VectorSearchProfile(
+                    name="my-vector-config",
+                    algorithm_configuration_name="my-algorithms-config",
+                )
+            ],
+            algorithms=[HnswAlgorithmConfiguration(name="my-algorithms-config")],
         )
-    except Exception as e:
-        print(f"Index creation failed: {e}")
+        index_client = SearchIndexClient(service_endpoint, credential)
+        try:
+            index_client.create_index(
+                SearchIndex(
+                    name=index_name, fields=fields, vector_search=vector_search_config
+                )
+            )
+        except Exception as e:
+            print(f"Index creation failed: {e}")
 
 
-def upload_experiences(*, index_name: str):
+def upload_experiences(*, index_name: str, limit: int | None = None):
+    # leave this import here to avoid collision with modules of same name ....settings.py etc
     from website.biohacks import TopicExperiences
+
+    search_client = SearchClient(
+        azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
+    )
 
     docs = []
     topics = ["Biohacking", "Sleep", "Pregnancy"]  # topics are sets of subreddits
-    limit = 1000
     for topic in topics:
         print(topic)
         o = TopicExperiences.load(name=topic)
@@ -136,30 +193,37 @@ def upload_experiences(*, index_name: str):
             and experience.source_type == "reddit"
         ]
         for experience in tqdm(valid_experiences[:limit]):
-            print(experience)
+            # print(experience)
+            # breakpoint()
             # doc = cls.from_pydantic(experience)
-            docs.append(experience.model_dump())
+            # transform - prunes unused fields
+            exp = ExperienceV0(**experience.model_dump())
+            docs.append(exp.model_dump())
             # docs.append(doc)
-    # save_batch_size = 500
-    # docs_batches = list(itertools.batched(docs, save_batch_size))
-    # for doc in docs:
-    #     hotel["descriptionVector"] = openai_large.embed_query(hotel["description"])
-    search_client = SearchClient(
-        azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
-    )
-    try:
+    # EMBEDDING STEP BREAKS BATCH UPLOAD.....
+    save_batch_size = 50
+    docs_batches = list(itertools.batched(docs, save_batch_size))
+    total_batches = len(docs_batches)
+    for number, batch in enumerate(docs_batches):
+        logger.info(f"Embedding batch {number + 1}/{total_batches}...")
+
+        embedding_batch = openai_large.embed_documents(
+            [doc["health_disorder"] for doc in batch]
+        )
+        for doc, embedding in zip(batch, embedding_batch):
+            doc["health_disorderVector"] = embedding
+        logger.debug(f"Embedding done, Uploading batch {number + 1}/{total_batches}...")
         result = search_client.upload_documents(documents=docs)
         if result:
-            logger.info(f"Documents uploaded successfully: {result}")
+            logger.success(f"Documents uploaded successfully: {len(result)}")
         else:
-            logger.warning("No documents were uploaded.")
-    except Exception as e:
-        logger.error(f"Failed to upload documents: {e}")
+            logger.error("No documents were uploaded.")
+            raise ValueError("No documents were uploaded.")
 
 
 if __name__ == "__main__":
 
-    index_name = "experiences-index-0"
-    # add_index()
-    # upload_experiences(index_name=index_name)
+    index_name = "experiences-index-3"
+    # ExperienceV0.create_index(index_name=index_name)
+    upload_experiences(index_name=index_name, limit=1000)
     # test_search_on_experiences(index_name=index_name)
