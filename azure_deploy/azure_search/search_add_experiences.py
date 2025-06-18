@@ -1,5 +1,6 @@
 import itertools
 import os
+from collections import defaultdict
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
