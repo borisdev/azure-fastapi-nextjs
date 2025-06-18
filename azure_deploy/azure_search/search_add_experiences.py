@@ -205,6 +205,7 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
     docs_batches = list(itertools.batched(docs, save_batch_size))
     total_batches = len(docs_batches)
     for number, batch in enumerate(docs_batches):
+        docs_with_vectors = []
         logger.info(f"Embedding batch {number + 1}/{total_batches}...")
 
         embedding_batch = openai_large.embed_documents(
@@ -212,10 +213,13 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
         )
         for doc, embedding in zip(batch, embedding_batch):
             doc["health_disorderVector"] = embedding
+            docs_with_vectors.append(doc)
         logger.debug(f"Embedding done, Uploading batch {number + 1}/{total_batches}...")
-        result = search_client.upload_documents(documents=docs)
+        result = search_client.upload_documents(documents=docs_with_vectors)
         if result:
-            logger.success(f"Documents uploaded successfully: {len(result)}")
+            logger.success(
+                f"Documents with vectors uploaded successfully: {len(result)}"
+            )
         else:
             logger.error("No documents were uploaded.")
             raise ValueError("No documents were uploaded.")
