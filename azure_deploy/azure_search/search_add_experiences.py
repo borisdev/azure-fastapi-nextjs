@@ -179,7 +179,7 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
     search_client = SearchClient(
         azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
     )
-
+    errors = defaultdict(int)
     docs = []
     topics = ["Biohacking", "Sleep", "Pregnancy"]  # topics are sets of subreddits
     for topic in topics:
@@ -197,13 +197,18 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
             # breakpoint()
             # doc = cls.from_pydantic(experience)
             # transform - prunes unused fields
-            exp = ExperienceV0(**experience.model_dump())
-            docs.append(exp.model_dump())
+            try:
+                exp = ExperienceV0(**experience.model_dump())
+                docs.append(exp.model_dump())
+            except Exception as e:
+                errors[str(e)] += 1
+                logger.warning(f"Error creating ExperienceV0: {e}")
             # docs.append(doc)
     # EMBEDDING STEP BREAKS BATCH UPLOAD.....
     save_batch_size = 50
     docs_batches = list(itertools.batched(docs, save_batch_size))
     total_batches = len(docs_batches)
+    counter = 0
     for number, batch in enumerate(docs_batches):
         docs_with_vectors = []
         logger.info(f"Embedding batch {number + 1}/{total_batches}...")
@@ -217,17 +222,22 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
         logger.debug(f"Embedding done, Uploading batch {number + 1}/{total_batches}...")
         result = search_client.upload_documents(documents=docs_with_vectors)
         if result:
+            counter += len(result)
             logger.success(
-                f"Documents with vectors uploaded successfully: {len(result)}"
+                f"Documents with vectors uploaded successfully: {counter}, {counter/len(docs)*100:.2f}%"
             )
         else:
             logger.error("No documents were uploaded.")
             raise ValueError("No documents were uploaded.")
+    if errors:
+        print("Errors encountered during upload:")
+        for error, count in errors.items():
+            print(f"{error}: {count}")
 
 
 if __name__ == "__main__":
 
     index_name = "experiences-index-3"
     # ExperienceV0.create_index(index_name=index_name)
-    upload_experiences(index_name=index_name, limit=1000)
+    upload_experiences(index_name=index_name, limit=None)
     # test_search_on_experiences(index_name=index_name)
