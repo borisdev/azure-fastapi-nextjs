@@ -13,7 +13,6 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
-
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
 from website.search import (enrich_search_results_chain, make_taxonomy,
                             new_ai_summary, run_search_query)

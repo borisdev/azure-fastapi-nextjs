@@ -34,6 +34,7 @@ from opensearchpy import (Date, DenseVector, Document, InnerDoc, Integer,
 from pydantic import BaseModel, Field
 from rich import print
 from rich.traceback import install
+
 from website.chain import Chain, endpoints
 from website.experiences import Experience
 from website.models import (AISummary, BiohackTypeGroup, DynamicBiohack,
@@ -43,6 +44,7 @@ from website.settings import azure_search_client, console
 load_dotenv()
 azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
 from openai import AsyncAzureOpenAI, AzureOpenAI
+
 from website.settings import west_api_key
 
 # install(show_locals=True)
@@ -94,17 +96,18 @@ def run_search_query(*, question: str, client, limit: int):
 
     vector_query = VectorizedQuery(
         vector=openai_large.embed_query(question),
-        k_nearest_neighbors=10,
+        k_nearest_neighbors=limit,
         fields="health_disorderVector",
     )
 
-    results = client.search(
-        vector_queries=[vector_query],
+    hybrid_results = client.search(
+        vector_queries=[vector_query],  # shape similarity
+        search_text=question,  # BM25 - probabilistic
         # select=["health_disorder", "action", "outcomes", "url"],
         top=limit,
     )
     experiences = []
-    for hit in results:
+    for hit in hybrid_results:
         experience = Experience(**hit)
         experience = clean(experience)
         experiences.append(experience)
@@ -1152,6 +1155,96 @@ def main(*, question: str, biohacks: list[DynamicBiohack]):
         print(result.data)
 
 
+async def why_care_coroutine_task(
+    *,
+    client,
+    llm_name: str,
+    max_retries: int,
+    # max_tokens: int,
+    question: str,
+    biohack: DynamicBiohack,
+) -> Any:
+    class Response(BaseModel):
+        why_care: Optional[str] = Field(
+            default=None,
+            title="Why care about this biohack?",
+            description=f"""
+                As concisely as possible, in 2-3 sentences, tell the user why she should care about this biohack in the context of her SEARCH_BAR_TEXT, {question}.
+                Just write down the specific facts and details and let the user draw her own conclusions.
+                Never give advice.
+                Clues that the user should care about this biohack include:
+
+                    - Impactful
+                    - Funny, novel, surprising, unexpected biohacks
+                    - Adverse side effects
+                    - Against conventional wisdom
+                    - Contradictory outcomes
+
+                If you are not sure you see a clear reason why the user should care about this biohack, just leave it blank.
+
+                Never write opinionated phrases like "demonstrating surprising endurance" or "which stands out as an unexpectedly dramatic outcome". Just stick to the facts and get to the point.
+                """,
+        )
+
+    prompt_template = """
+
+        User's SEARCH_BAR_TEXT
+        ******************************
+
+        {{question}}
+
+
+        Biohack name: {{ biohack.biohack_topic }}
+        -------------------------------------------
+
+        Experiences:
+        -----------------------------
+
+        {% for experience in biohack.experiences %}
+            ------------------------------------------
+
+            Source: {{ experience.source_type }}
+            Action: {{ experience.action }}
+            Outcomes: {{ experience.outcomes }}
+            Mechanism: {{ experience.mechanism }}
+            Disorder: {{ experience.health_disorder }}
+
+            ------------------------------------------
+        {% endfor %}
+    """
+
+    template = Template(prompt_template)
+    prompt = template.render(question=question, biohack=biohack)
+    try:
+        result = await client.chat.completions.create(  # type: ignore
+            model=llm_name,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            response_model=Response,
+            max_retries=max_retries,
+            # max_tokens=max_tokens,
+        )
+    except InstructorRetryException as e:
+        print(prompt)
+        logger.warning(f"Retry Exception: {e}")
+        return e
+    except BadRequestError as e:
+        print(prompt)
+        logger.warning(f"Risky Content: {e}")
+        return e
+    except ValidationError as e:
+        print(prompt)
+        logger.warning(f"Validation error: {e}")
+        return e
+    except Exception as e:
+        print(prompt)
+        logger.error(f"Unknown Exception: {e}")
+        # website.chain:coroutine:136 - Unknown Exception: Connection error.
+        return e
+    return result
+
+
 if __name__ == "__main__":
     # Cross encoder will works to filter out very obvious non-relevant experiences, say .30 and below
     # https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/cross-encoder/cross-encoder_usage.py
@@ -1167,8 +1260,7 @@ if __name__ == "__main__":
     question = "Blueprint+diet"
     question = "Cancer and diet"
     question = "My Oura ring is showing a low REM score. What can I do to improve it?"
-    limit = 250
-    topic_index = "experiences_3"
+    limit = 100
     start = time.time()
     experiences = run_search_query(
         question=question, client=azure_search_client, limit=limit
@@ -1186,10 +1278,13 @@ if __name__ == "__main__":
     #         timeout=4,
     #     )
     # )
+    taxonomy = make_taxonomy(experiences=experiences)
     # ai_enrich_time = time.time() - start
     # print(f"AI enrich time: {ai_enrich_time}")
     # start = time.time()
-    # # summary = asyncio.run(new_ai_summary(taxonomy=taxonomy, question=question))
+    summary = asyncio.run(new_ai_summary(taxonomy=taxonomy, question=question))
+    print(summary)
+
     # biohacks = []
     # for biohack_type_group in taxonomy.biohack_types:
     #     for biohack in biohack_type_group.biohacks:

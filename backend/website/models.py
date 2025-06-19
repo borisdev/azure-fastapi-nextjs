@@ -132,6 +132,9 @@ class Experience(BaseModel):
 
 class DynamicBiohack(BaseModel):
     biohack_topic: Optional[str] = None
+    why_care: Optional[str] = None
+    biohack_topic: Optional[str] = None
+    biohack_topic: Optional[str] = None
     experiences: list[Experience]
     balance: Optional[bool] = None
     skeptical: Optional[bool] = None
