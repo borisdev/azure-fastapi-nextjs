@@ -96,7 +96,7 @@ def run_search_query(*, question: str, client, limit: int):
 
     vector_query = VectorizedQuery(
         vector=openai_large.embed_query(question),
-        k_nearest_neighbors=3,
+        k_nearest_neighbors=10,
         fields="health_disorderVector",
     )
 
