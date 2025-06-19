@@ -5,6 +5,8 @@ from collections import defaultdict
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
+# Example of defining a semantic configuration when creating an index using the Python SDK
+# SemanticConfiguration,; SemanticField,; SemanticSettings,
 from azure.search.documents.indexes.models import (HnswAlgorithmConfiguration,
                                                    SearchableField,
                                                    SearchField,
@@ -162,9 +164,24 @@ class ExperienceV0(BaseModel):
             ],
             algorithms=[HnswAlgorithmConfiguration(name="my-algorithms-config")],
         )
+
+        # semantic_config = SemanticConfiguration(
+        # 	name="default",
+        # 	prioritized_fields={
+        # 		"titleField": {"fieldName": "title"},
+        # 		"contentFields": [{"fieldName": "content"}],
+        # 		"keywordsFields": [{"fieldName": "category"}],
+        # 	}
+        # )
+        #
+        # semantic_settings = SemanticSettings(configurations=[semantic_config])
+
         index_client = SearchIndexClient(service_endpoint, credential)
         try:
             index_client.create_index(
+                # SearchIndex(
+                #     name=index_name, fields=fields, vector_search=vector_search_config, semantic_settings=semantic_settings
+                # )
                 SearchIndex(
                     name=index_name, fields=fields, vector_search=vector_search_config
                 )
@@ -237,8 +254,59 @@ def upload_experiences(*, index_name: str, limit: int | None = None):
 
 
 if __name__ == "__main__":
+    # TODO: Figure out semantic search with python sdk
+    # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents/samples
+    # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents
 
+    # index_name = "experiences-index-4"
     index_name = "experiences-index-3"
     # ExperienceV0.create_index(index_name=index_name)
-    upload_experiences(index_name=index_name, limit=None)
-    # test_search_on_experiences(index_name=index_name)
+    # upload_experiences(index_name=index_name, limit=100)
+    search_client = SearchClient(
+        azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
+    )
+
+    query = "Inducement labor"
+
+    vector_query = VectorizedQuery(
+        vector=openai_large.embed_query(query),
+        k_nearest_neighbors=3,
+        fields="health_disorderVector",
+    )
+
+    results = search_client.search(
+        vector_queries=[vector_query],
+        select=["health_disorder", "action", "outcomes", "url"],
+        top=5,
+    )
+
+    for number, result in enumerate(results):
+        logger.info(f"VECTOR Result {number + 1}: {print(result)}")
+
+    results = search_client.search(
+        search_text=query,
+        vector_queries=[vector_query],
+        select=["health_disorder", "action", "outcomes", "url"],
+        top=5,
+    )
+
+    logger.warning("HYBRID -----------------------------------")
+    for number, result in enumerate(results):
+        logger.success(f"HYBRID Result {number + 1}: {print(result)}")
+
+
+# results = search_client.search(
+# 	search_text="search query",
+# 	query_type="semantic",
+# 	semantic_configuration_name="my-semantic-config",
+# 	query_language="en-us",
+# 	captions="extractive|highlight-true",
+# 	answers="extractive|count-3",
+# 	select=["health_disorder", "action", "outcomes", "url"],
+# 	top=5,
+# )
+#
+#
+#    logger.warning("SEMANTIC -----------------------------------")
+#    for number, result in enumerate(results):
+#        logger.success(f"SEMANTIC Result {number + 1}: {print(result)}")
