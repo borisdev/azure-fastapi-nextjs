@@ -46,21 +46,25 @@
 -   Azure cloud registry being hydrated with the latest images, which depends on...
 -   Locally we build the images first, and then push the images to the registry
 
-### Build Docker Images
+### Build Deployable Docker Image
 
-> [!NOTE]  
+Keep track of the version in the `.env` file.
+
+```bash
+API_VERSION="v5"
+```
+
+````bash
+
+> [!NOTE]
 > `nobs` in this doc denotes my personal project's prefixing.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > A Mac M1 image will not work in the cloud. Use `docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .`
 
 ```bash
 cd backend
-docker build --tag nobs_backend --file docker/Dockerfile .
 docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .
-cd ../frontend
-docker build --tag nobs_frontend --file docker/Dockerfile .
-docker tag nobs_backend nobsregistry.azurecr.io/nobs_backend:v1
 docker tag nobs_backend_amd64 nobsregistry.azurecr.io/nobs_backend:latest
 docker images
 # REPOSITORY                             TAG       IMAGE ID       CREATED        SIZE
@@ -79,7 +83,7 @@ az acr repository show-tags --name nobsregistry --repository nobs_backend
 # [
 #   "aws_prod"
 # ]
-```
+````
 
 ### References
 
