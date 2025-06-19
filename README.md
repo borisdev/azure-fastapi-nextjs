@@ -59,7 +59,7 @@ API_VERSION="v5"
 > [!IMPORTANT]
 > Mac M1 docker image can't be deployed to cloud, so for building cloud images change from `docker build . ` to `docker buildx build --platform linux/amd64 .`
 
-Example for building the backend image:
+Example for building and pushing the backend image:
 
 ```bash
 cd backend
