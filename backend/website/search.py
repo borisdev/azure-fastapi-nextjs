@@ -34,7 +34,6 @@ from opensearchpy import (Date, DenseVector, Document, InnerDoc, Integer,
 from pydantic import BaseModel, Field
 from rich import print
 from rich.traceback import install
-
 from website.chain import Chain, endpoints
 from website.experiences import Experience
 from website.models import (AISummary, BiohackTypeGroup, DynamicBiohack,
@@ -44,7 +43,6 @@ from website.settings import azure_search_client, console
 load_dotenv()
 azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
 from openai import AsyncAzureOpenAI, AzureOpenAI
-
 from website.settings import west_api_key
 
 # install(show_locals=True)
