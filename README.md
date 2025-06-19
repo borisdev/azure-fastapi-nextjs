@@ -1,7 +1,7 @@
 # Cheatsheet: Azure + FastAPI + NextJS
 
 > [!CAUTION]
-> Don't use this repo. It is completely under construction.
+> NextJS is not hooked up yet, FastAPI backend is serving the HTML pages using HTMX, for now.
 
 ### Assumptions
 
