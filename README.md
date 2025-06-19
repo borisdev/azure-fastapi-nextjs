@@ -64,25 +64,20 @@ API_VERSION="v5"
 
 ```bash
 cd backend
-docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .
-docker tag nobs_backend_amd64 nobsregistry.azurecr.io/nobs_backend:latest
-docker images
-# REPOSITORY                             TAG       IMAGE ID       CREATED        SIZE
-# nobsregistry.azurecr.io/nobs_backend      v1        585a4696bedd   44 hours ago   197MB
-# nobs_backend                           latest    585a4696bedd   43 hours ago   197MB
-# nobs_frontend                          latest    585a4696bedd   43 hours ago   197MB
-
+docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v7 .
 az login
 az acr login --name nobsregistry
-docker push nobsregistry.azurecr.io/nobs_backend:v1
+docker push nobsregistry.azurecr.io/nobs_backend_amd64:v7
 az acr repository list --name nobsregistry
-# [
-#   "nobs_backend",
-# ]
-az acr repository show-tags --name nobsregistry --repository nobs_backend
-# [
-#   "aws_prod"
-# ]
+[
+  "nobs_backend",
+  "nobs_backend_amd64"
+]
+az acr repository show-tags --name nobsregistry --repository nobs_backend_amd64
+[
+  "aws_prod",
+  "v6"
+]
 ````
 
 ### References
