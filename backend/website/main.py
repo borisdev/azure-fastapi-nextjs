@@ -13,11 +13,10 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
-
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
 from website.search import (enrich_search_results_chain, new_ai_summary,
-                            run_opensearch_query)
-from website.settings import opensearch_client, web_app_env
+                            run_search_query)
+from website.settings import azure_search_client, web_app_env
 
 install()
 
@@ -268,11 +267,9 @@ async def search(
         )
 
     # Part 1 of 3: Search candidate biohacks - recall
-    limit = 250
-    client = opensearch_client
-    experiences = run_opensearch_query(
-        question=question, index_name=topic_index, client=client, limit=limit
-    )
+    limit = 100
+    client = azure_search_client
+    experiences = run_search_query(question=question, client=client, limit=limit)
     count_experiences = len(experiences)
     if count_experiences > 1:
 

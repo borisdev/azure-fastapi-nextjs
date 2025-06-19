@@ -88,15 +88,25 @@ if opensearch_host == "nlp.nobsmed-api.com":
 
     logger.info("Using cloud opensearch")
 
-elif opensearch_host == "localhost":
-    opensearch_client = OpenSearch(
-        hosts=[{"host": "localhost", "port": 9200}],
-    )
-    logger.info("Using local opensearch")
-elif opensearch_host == "opensearch":
-    opensearch_client = OpenSearch(
-        hosts=[{"host": "opensearch", "port": 9200}],
-    )
-else:
-    logger.error("OPENSEARCH_HOST not set correctly")
-    raise ValueError("OPENSEARCH_HOST not set correctly")
+# elif opensearch_host == "localhost":
+#     opensearch_client = OpenSearch(
+#         hosts=[{"host": "localhost", "port": 9200}],
+#     )
+#     logger.info("Using local opensearch")
+# elif opensearch_host == "opensearch":
+#     opensearch_client = OpenSearch(
+#         hosts=[{"host": "opensearch", "port": 9200}],
+#     )
+# else:
+#     logger.error("OPENSEARCH_HOST not set correctly")
+#     raise ValueError("OPENSEARCH_HOST not set correctly")
+
+index_name = "experiences-index-3"
+azure_search_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+azure_search_key = os.environ["AZURE_SEARCH_API_KEY"]
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+azure_search_client = SearchClient(
+    azure_search_endpoint, index_name, AzureKeyCredential(azure_search_key)
+)

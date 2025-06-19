@@ -22,6 +22,7 @@ from typing import Any, Iterable, Literal, Optional
 
 import instructor
 import logfire
+from azure.search.documents.models import VectorizedQuery
 from dotenv import load_dotenv
 from jinja2 import Template
 from loguru import logger
@@ -37,7 +38,7 @@ from website.chain import Chain, endpoints
 from website.experiences import Experience
 from website.models import (AISummary, BiohackTypeGroup, DynamicBiohack,
                             DynamicBiohackingTaxonomy)
-from website.settings import console, opensearch_client
+from website.settings import azure_search_client, console
 
 load_dotenv()
 azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
@@ -69,65 +70,45 @@ def clean(experience: Experience):
     return experience
 
 
-def run_opensearch_query(*, question: str, index_name: str, client, limit: int):
+from azure.core.credentials import AzureKeyCredential
+
+credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+
+from langchain_openai import AzureOpenAIEmbeddings
+
+openai_large = AzureOpenAIEmbeddings(
+    # Usage examples:
+    # vector = openai_large.embed_query(text)
+    # vectors = openai_large.embed_documents(input_texts)
+    azure_deployment="text-embedding-3-large",
+    openai_api_version="2024-02-01",  # pyright: ignore
+    azure_endpoint="https://openai-rg-nobsmed.openai.azure.com/",
+    api_key=os.environ["API_KEY"],
+)
+
+
+def run_search_query(*, question: str, client, limit: int):
     console.print(f"Client: {client}", style="info")
     console.print(f"Searching for: {question}", style="info")
-    should = []
-    # phrases = extract_phrases(question)
-    # console.print(f"Extracted phrases: {phrases}", style="info")
-    # for phrase in phrases:
-    should.append(
-        {
-            "multi_match": {
-                "fuzziness": "AUTO",
-                "query": question,
-                # "type": "phrase",
-                "fields": [
-                    "takeaway",
-                    "action",
-                    "outcomes",
-                    "health_disorder",
-                    "mechanism",
-                ],
-            }
-        }
-    )
-    response = client.search(
-        index=index_name,
-        # explain=True,
-        body={
-            "size": limit,
-            "query": {
-                "bool": {"should": should},
-            },
-            ## One day surface search result highlight from other fields
-            "highlight": {
-                "fields": {
-                    "takeaway": {},
-                    "action": {},
-                    "outcomes": {},
-                    "health_disorder": {},
-                    "mechanism": {},
-                }
-            },
-        },
-    )
-    # print(response)
 
-    results = []
-    # total_hits = response["hits"]["total"]["value"]
-    for hit in response["hits"]["hits"]:
-        # print(hit)
-        experience_dict = hit["_source"]
-        # print(experience_dict)
-        experience = Experience(**experience_dict)
+    vector_query = VectorizedQuery(
+        vector=openai_large.embed_query(question),
+        k_nearest_neighbors=3,
+        fields="health_disorderVector",
+    )
 
-        # clean experience
+    results = client.search(
+        vector_queries=[vector_query],
+        # select=["health_disorder", "action", "outcomes", "url"],
+        top=limit,
+    )
+
+    for hit in results:
+        experience = Experience(**hit)
         experience = clean(experience)
-
         results.append(experience)
-    # sort by score
-    results = sorted(results, key=lambda x: x.score, reverse=True)
+    # results = sorted(results, key=lambda x: x.score, reverse=True)
     return results
 
 
@@ -1109,7 +1090,7 @@ def main(*, question: str, biohacks: list[DynamicBiohack]):
 if __name__ == "__main__":
     # Cross encoder will works to filter out very obvious non-relevant experiences, say .30 and below
     # https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/cross-encoder/cross-encoder_usage.py
-    client = opensearch_client
+    client = azure_search_client
     # ExperienceDoc3.re_create_index(use_client=client)
     # ExperienceDoc3.rehydrate_index(
     #     use_client=client, topics=["Biohacking", "Sleep", "Pregnancy"]
@@ -1125,9 +1106,7 @@ if __name__ == "__main__":
     limit = 250
     topic_index = "experiences_3"
     start = time.time()
-    experiences = run_opensearch_query(
-        question=question, index_name=topic_index, client=client, limit=limit
-    )
+    experiences = run_search_query(question=question, client=client, limit=limit)
     opensearch_time = time.time() - start
     start = time.time()
     taxonomy = asyncio.run(
