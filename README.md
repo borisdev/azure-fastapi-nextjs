@@ -57,7 +57,9 @@ API_VERSION="v5"
 > [!NOTE] > `nobs` in this doc denotes my personal project's prefixing.
 
 > [!IMPORTANT]
-> A Mac M1 image will not work in the cloud. Use `docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .`
+> Mac M1 docker image can't be deployed to cloud, so for building cloud images change from `docker build . ` to `docker buildx build --platform linux/amd64 .`
+
+Example for building the backend image:
 
 ```bash
 cd backend
@@ -66,15 +68,13 @@ az login
 az acr login --name nobsregistry
 docker push nobsregistry.azurecr.io/nobs_backend_amd64:v7
 az acr repository list --name nobsregistry
-[
-  "nobs_backend",
-  "nobs_backend_amd64"
-]
+# [
+#   "nobs_backend_amd64"
+# ]
 az acr repository show-tags --name nobsregistry --repository nobs_backend_amd64
-[
-  "aws_prod",
-  "v6"
-]
+# [
+#  "v7"
+# ]
 ```
 
 ### References
