@@ -54,10 +54,7 @@ Keep track of the version in the `.env` file.
 API_VERSION="v5"
 ```
 
-````bash
-
-> [!NOTE]
-> `nobs` in this doc denotes my personal project's prefixing.
+> [!NOTE] > `nobs` in this doc denotes my personal project's prefixing.
 
 > [!IMPORTANT]
 > A Mac M1 image will not work in the cloud. Use `docker buildx build --platform linux/amd64 -t nobs_backend_amd64 .`
@@ -78,7 +75,7 @@ az acr repository show-tags --name nobsregistry --repository nobs_backend_amd64
   "aws_prod",
   "v6"
 ]
-````
+```
 
 ### References
 
