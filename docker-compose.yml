@@ -1,10 +1,11 @@
 services:
 
   backend:
-    image: nobs_backend
-    container_name: backend
-    # build:
-    #   context: ./backend
+    # image: nobs_backend
+    image: azure-fastapi-nextjs_backend:latest
+    #container_name: backend
+    #build:
+    #  context: ./backend
     restart: always
     env_file:
       - .secret
@@ -17,10 +18,13 @@ services:
     working_dir: /website
     command: ["fastapi", "dev" , "main.py", "--host=0.0.0.0", "--port=80", "--reload"]
     environment:
-      - OPENSEARCH_HOST=nlp.nobsmed-api.com
+      # - OPENSEARCH_HOST=nlp.nobsmed-api.com
       - LOGFIRE_TOKEN=pylf_v1_us_0Zwx0ljglQWt10t2sxZXVRqKkk74mmn00zSmvyq2W5LP
       - LOGFIRE_SEND_TO_LOGFIRE=true
       - LOGFIRE_ENVIRONMENT=LAPTOP
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONBREAKPOINT=ipdb.set_trace
       - WEB_APP_ENV=LAPTOP # TEST or PROD
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4

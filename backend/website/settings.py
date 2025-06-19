@@ -1,12 +1,16 @@
 import os
 from pathlib import Path
 
+from dotenv import find_dotenv, load_dotenv
 # import redis
 from loguru import logger
 from opensearchpy import OpenSearch
 from rich import print
 from rich.console import Console
 from rich.theme import Theme
+
+load_dotenv(find_dotenv(".env"))
+load_dotenv(find_dotenv(".secret"))
 
 ETL_STORE_DIR = "/Users/borisdev/workspace/nobsmed/data/etl_store"
 custom_theme = Theme({"info": "dim cyan", "warning": "magenta", "danger": "bold red"})
@@ -73,20 +77,23 @@ console.print("THIS IS NEW ************************ FIXED LOGFIRE BUG", style="i
 #     else:
 #         raise ValueError(f"Redis connection error: {e}")
 
-if opensearch_host == "nlp.nobsmed-api.com":
-    opensearch_client = OpenSearch(
-        hosts=[{"host": "nlp.nobsmed-api.com", "port": 9200}],
-        http_auth=("admin", "Boris@nobsmed.com-123"),
-        use_ssl=True,
-        verify_certs=False,
-        ssl_assert_hostname=False,
-        ssl_show_warn=False,
-        timeout=30,  # Increase timeout to 30 seconds
-        retry_on_timeout=True,
-        max_retries=3,
-    )
+# OpenSearch client disabled to test Azure Search fallback hypothesis
+opensearch_client = None
 
-    logger.info("Using cloud opensearch")
+# if opensearch_host == "nlp.nobsmed-api.com":
+#     opensearch_client = OpenSearch(
+#         hosts=[{"host": "nlp.nobsmed-api.com", "port": 9200}],
+#         http_auth=("admin", "Boris@nobsmed.com-123"),
+#         use_ssl=True,
+#         verify_certs=False,
+#         ssl_assert_hostname=False,
+#         ssl_show_warn=False,
+#         timeout=30,  # Increase timeout to 30 seconds
+#         retry_on_timeout=True,
+#         max_retries=3,
+#     )
+# 
+#     logger.info("Using cloud opensearch")
 
 # elif opensearch_host == "localhost":
 #     opensearch_client = OpenSearch(

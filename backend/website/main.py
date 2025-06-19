@@ -13,9 +13,10 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
+
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
-from website.search import (enrich_search_results_chain, new_ai_summary,
-                            run_search_query)
+from website.search import (enrich_search_results_chain, make_taxonomy,
+                            new_ai_summary, run_search_query)
 from website.settings import azure_search_client, web_app_env
 
 install()
@@ -245,7 +246,6 @@ async def search(
     request: Request,
     question: str,
     background_tasks: BackgroundTasks,
-    topic_index: str = "experiences_4",
 ):
     # Part 0 check cache
     question = question.strip().replace("?", "")
@@ -268,51 +268,62 @@ async def search(
 
     # Part 1 of 3: Search candidate biohacks - recall
     limit = 100
-    client = azure_search_client
-    experiences = run_search_query(question=question, client=client, limit=limit)
+    experiences = run_search_query(
+        question=question, client=azure_search_client, limit=limit
+    )
     count_experiences = len(experiences)
     if count_experiences > 1:
+        taxonomy = make_taxonomy(experiences=experiences)
+        biohack_types = taxonomy.biohack_types
+        count_reddits = taxonomy.count_reddits
+        count_studies = taxonomy.count_studies
+        cache["taxonomy" + question] = taxonomy
+        logfire.info(f"AI Search saved to cache with key: `taxonomy{question}`")
+        relevance_polling = "finished"
 
-        # Perform the search immediately rather than in a background task
-        try:
-            taxonomy = await enrich_search_results_chain(
-                experiences=experiences,
-                question=question,
-                batch_size=limit + 1,
-                llm_name="gpt-4o-mini",
-                max_tokens=100,
-                max_retries=0,
-                timeout=4,
-            )
-            cache["taxonomy" + question] = taxonomy
-            logfire.info(f"AI Search saved to cache with key: `taxonomy{question}`")
-            relevance_polling = "finished"
-            biohack_types = taxonomy.biohack_types
-            count_reddits = taxonomy.count_reddits
-            count_studies = taxonomy.count_studies
-        except Exception as e:
-            logfire.error(f"Error in synchronous search: {e}")
-            # Fall back to polling approach
-            background_tasks.add_task(
-                ai_search_task,
-                question=question,
-                experiences=experiences,
-                batch_size=limit + 1,
-                llm_name="gpt-4o-mini",
-                max_tokens=100,
-                max_retries=0,
-                timeout=4,
-            )
-            logfire.info(
-                "Started ai_relevance background task, telling FE to start polling"
-            )
-            relevance_polling = "on"
-            biohack_types = []
-            count_reddits = 0
-            count_studies = 0
+        # # Perform the search immediately rather than in a background task
+        # try:
+        #     taxonomy = await enrich_search_results_chain(
+        #         experiences=experiences,
+        #         question=question,
+        #         batch_size=limit + 1,
+        #         llm_name="gpt-4o-mini",
+        #         max_tokens=100,
+        #         max_retries=0,
+        #         timeout=4,
+        #     )
+        #     cache["taxonomy" + question] = taxonomy
+        #     logfire.info(f"AI Search saved to cache with key: `taxonomy{question}`")
+        #     relevance_polling = "finished"
+        #     biohack_types = taxonomy.biohack_types
+        #     count_reddits = taxonomy.count_reddits
+        #     count_studies = taxonomy.count_studies
+        # except Exception as e:
+        #     logfire.error(f"Error in synchronous search: {e}")
+        #     # Fall back to polling approach
+        #     background_tasks.add_task(
+        #         ai_search_task,
+        #         question=question,
+        #         experiences=experiences,
+        #         batch_size=limit + 1,
+        #         llm_name="gpt-4o-mini",
+        #         max_tokens=100,
+        #         max_retries=0,
+        #         timeout=4,
+        #     )
+        #     logfire.info(
+        #         "Started ai_relevance background task, telling FE to start polling"
+        #     )
+        #     relevance_polling = "on"
+        #     biohack_types = []
+        #     count_reddits = 0
+        #     count_studies = 0
     else:
         relevance_polling = "not_started"
         logfire.warning("No experiences found, so no AI task started")
+        count_reddits = 0
+        count_studies = 0
+        biohack_types = []
 
     # {"traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"}
     trace_headers = {}

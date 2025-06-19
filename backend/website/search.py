@@ -34,6 +34,7 @@ from opensearchpy import (Date, DenseVector, Document, InnerDoc, Integer,
 from pydantic import BaseModel, Field
 from rich import print
 from rich.traceback import install
+
 from website.chain import Chain, endpoints
 from website.experiences import Experience
 from website.models import (AISummary, BiohackTypeGroup, DynamicBiohack,
@@ -43,6 +44,7 @@ from website.settings import azure_search_client, console
 load_dotenv()
 azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
 from openai import AsyncAzureOpenAI, AzureOpenAI
+
 from website.settings import west_api_key
 
 # install(show_locals=True)
@@ -70,10 +72,10 @@ def clean(experience: Experience):
     return experience
 
 
-from azure.core.credentials import AzureKeyCredential
+# from azure.core.credentials import AzureKeyCredential
 
-credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
-service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+# credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
+# service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 
 from langchain_openai import AzureOpenAIEmbeddings
 
@@ -103,13 +105,14 @@ def run_search_query(*, question: str, client, limit: int):
         # select=["health_disorder", "action", "outcomes", "url"],
         top=limit,
     )
-
+    experiences = []
     for hit in results:
         experience = Experience(**hit)
         experience = clean(experience)
-        results.append(experience)
-    # results = sorted(results, key=lambda x: x.score, reverse=True)
-    return results
+        experiences.append(experience)
+    experiences = sorted(experiences, key=lambda x: x.score, reverse=True)
+    print(experiences)
+    return experiences
 
 
 async def enrich_search_results_chain(
@@ -211,6 +214,70 @@ async def enrich_search_results_chain(
     enrich_time = time.time() - llm_start
     logger.info(f"Enrich time: {enrich_time}")
     start = time.time()
+
+    biohack_type2biohack = defaultdict(list)
+    enriched_biohacks = []
+    for biohack in dynamic_biohacks:
+        enriched_biohacks.append(biohack)
+        biohack_type2biohack[biohack.biohack_type].append(biohack)
+
+    biohack_type_groups: list[BiohackTypeGroup] = []
+    for biohack_type, biohacks in biohack_type2biohack.items():
+        biohack_type_group = BiohackTypeGroup(
+            biohack_type=biohack_type, biohacks=biohacks
+        )
+        biohack_type_groups.append(biohack_type_group)
+
+    taxonomy = DynamicBiohackingTaxonomy(
+        biohack_types=biohack_type_groups,
+        count_experiences=len(pertinent_experiences),
+        count_reddits=sum(
+            [
+                1
+                for experience in pertinent_experiences
+                if experience.source_type == "reddit"
+            ]
+        ),
+        count_studies=sum(
+            [
+                1
+                for experience in pertinent_experiences
+                if experience.source_type == "study"
+            ]
+        ),
+    )
+    taxo_time = time.time() - start
+    print(f"Taxo time: {taxo_time}")
+    return taxonomy
+
+
+def make_taxonomy(
+    *,
+    experiences: list[Experience],
+) -> DynamicBiohackingTaxonomy:
+    start = time.time()
+    # deduplicate experiences
+    existing = set()
+    deduplicated = []
+    for experience in experiences:
+        action_outcome = f"{experience.action} {experience.outcomes}"
+        if action_outcome not in existing:
+            deduplicated.append(experience)
+            existing.add(action_outcome)
+    experiences = deduplicated
+    experiences = [clean(experience) for experience in experiences]
+
+    dynamic_biohacks: list[DynamicBiohack] = []
+    biohack_topic2experiences = defaultdict(list)
+    pertinent_experiences = []
+    for experience in experiences:
+        experience = clean(experience)
+        pertinent_experiences.append(experience)
+        biohack_topic2experiences[experience.biohack_topic].append(experience)
+
+    for k, v in biohack_topic2experiences.items():
+        dynamic_biohack = DynamicBiohack(biohack_topic=k, experiences=v)
+        dynamic_biohacks.append(dynamic_biohack)
 
     biohack_type2biohack = defaultdict(list)
     enriched_biohacks = []
@@ -1090,7 +1157,6 @@ def main(*, question: str, biohacks: list[DynamicBiohack]):
 if __name__ == "__main__":
     # Cross encoder will works to filter out very obvious non-relevant experiences, say .30 and below
     # https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/cross-encoder/cross-encoder_usage.py
-    client = azure_search_client
     # ExperienceDoc3.re_create_index(use_client=client)
     # ExperienceDoc3.rehydrate_index(
     #     use_client=client, topics=["Biohacking", "Sleep", "Pregnancy"]
@@ -1106,22 +1172,24 @@ if __name__ == "__main__":
     limit = 250
     topic_index = "experiences_3"
     start = time.time()
-    experiences = run_search_query(question=question, client=client, limit=limit)
-    opensearch_time = time.time() - start
-    start = time.time()
-    taxonomy = asyncio.run(
-        enrich_search_results_chain(
-            question=question,
-            experiences=experiences,
-            batch_size=limit + 1,
-            llm_name="gpt-4o-mini",
-            max_tokens=200,
-            max_retries=0,
-            timeout=4,
-        )
+    experiences = run_search_query(
+        question=question, client=azure_search_client, limit=limit
     )
-    ai_enrich_time = time.time() - start
-    print(f"AI enrich time: {ai_enrich_time}")
+    # opensearch_time = time.time() - start
+    # start = time.time()
+    # taxonomy = asyncio.run(
+    #     enrich_search_results_chain(
+    #         question=question,
+    #         experiences=experiences,
+    #         batch_size=limit + 1,
+    #         llm_name="gpt-4o-mini",
+    #         max_tokens=200,
+    #         max_retries=0,
+    #         timeout=4,
+    #     )
+    # )
+    # ai_enrich_time = time.time() - start
+    # print(f"AI enrich time: {ai_enrich_time}")
     # start = time.time()
     # # summary = asyncio.run(new_ai_summary(taxonomy=taxonomy, question=question))
     # biohacks = []
