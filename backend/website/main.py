@@ -13,9 +13,10 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
+
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
-from website.search import (enrich_search_results_chain, make_taxonomy,
-                            new_ai_summary, run_search_query)
+from website.search import (make_taxonomy, run_search_and_enrich,
+                            run_search_query)
 from website.settings import azure_search_client, web_app_env
 
 install()
@@ -267,12 +268,24 @@ async def search(
 
     # Part 1 of 3: Search candidate biohacks - recall
     limit = 100
-    experiences = run_search_query(
-        question=question, client=azure_search_client, limit=limit
+    taxonomy = await run_search_and_enrich(
+        question=question,
+        client=azure_search_client,
+        limit=limit,
+        batch_size=300,
+        llm_name="gpt-4o",
+        max_tokens=100,
+        max_retries=0,
+        timeout=1,
     )
-    count_experiences = len(experiences)
-    if count_experiences > 1:
-        taxonomy = make_taxonomy(experiences=experiences)
+    # experiences = run_search_query(
+    #     question=question, client=azure_search_client, limit=limit
+    # )
+    # count_experiences = len(experiences)
+    count_biohacks = len(taxonomy.biohack_types)
+    # if count_experiences > 1:
+    if count_biohacks > 1:
+        # taxonomy = make_taxonomy(experiences=experiences)
         biohack_types = taxonomy.biohack_types
         count_reddits = taxonomy.count_reddits
         count_studies = taxonomy.count_studies
@@ -332,7 +345,7 @@ async def search(
         "request": request,
         "relevance_polling": relevance_polling,
         "summary_polling": "off",
-        "count_experiences": count_experiences,
+        "count_experiences": taxonomy.count_experiences,
         "traceparent": trace_headers["traceparent"],
         "first_poll": "true",
     }
