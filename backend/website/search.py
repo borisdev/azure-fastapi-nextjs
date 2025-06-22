@@ -14,14 +14,12 @@ from pydantic import BaseModel, Field
 # from opensearch_dsl import Search
 from rich import print
 from rich.traceback import install
-
 from website.chain import Chain
 
 # install(show_locals=True)
 install()
 
 from langchain_openai import AzureOpenAIEmbeddings
-
 from website.experiences import Experience
 from website.models import (BiohackTypeGroup, DynamicBiohack,
                             DynamicBiohackingTaxonomy)
@@ -201,29 +199,24 @@ async def enrich_biohacks(
     question = question.strip()
 
     class Output(BaseModel):
+        relevant: bool = Field(
+            default=False,
+            title="Relevant",
+            description="""
+                Write True if the health hack is relevant to the user's question, otherwise False.
+                A relevant health hack must meet the following criteria:
+                1. The health hack must be related to the user's question.
+                2. The health hack must be interesting or effective enough to be worth mentioning.
+                3. The health hack must be actionable, meaning the user can take steps to implement it.
+            """,
+        )
         why_care: Optional[str] = Field(
             default=None,
-            title="Pertinence",
+            title="Why matters",
             description=f"""
-                As concisely as possible, in 1 sentence, highlight for the user
-                only what is very relevant to her health question, {question}.
-
-                Never give advice or generalizations or opinions.
-                Focus on specific facts and details.
-                Let the user draw their own conclusions.
-
-                Ignore experiences that are not relevant to the question.
-
-                Clues that the user should care about an experience:
-
-                    - Impactful
-                    - Funny, novel, surprising, unexpected biohacks
-                    - Adverse side effects
-                    - Against conventional wisdom
-                    - Contradictory outcomes
-
-                If the experiences in this biohack and not very relevant to
-                helping the user with their health question, leave this field blank.
+            Look at the health hack experiences and summarize in one concise sentence
+            the most impoertant takeaway for the user based on her health optimization, {question}.
+            Leave your response empty if the health hack is not relevant to the user's question.
                 """,
         )
 
@@ -258,7 +251,6 @@ async def enrich_biohacks(
                     Source: {{ experience.source_type }}
                     Action: {{ experience.action }}
                     Outcomes: {{ experience.outcomes }}
-                    Mechanism: {{ experience.mechanism }}
                     Disorder: {{ experience.health_disorder }}
 
                     ------------------------------------------
@@ -278,15 +270,18 @@ async def enrich_biohacks(
         timeout=timeout,  # 1
     )
     enriched_biohacks = []
+
     for biohack, response in zip(biohacks, responses):
-        # prune irrelevant biohacks
-        try:
-            biohack.why_care = response.why_care
-        except Exception as e:
-            logger.warning(f"Error response: {response}, {e}")
+        if not isinstance(response, Output):
+            continue  # Skip if response is not of type Output
+        if not response.relevant:
             continue
-        if biohack.why_care is not None:
-            enriched_biohacks.append(biohack)
+        if response.why_care is None or response.why_care.strip() == "":
+            continue  # Skip if why_care is not empty
+        biohack.why_care = response.why_care.strip()
+
+        print(biohack.why_care)
+        enriched_biohacks.append(biohack)
     return enriched_biohacks
 
 

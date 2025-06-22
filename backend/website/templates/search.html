@@ -38,15 +38,38 @@
                 touch-action: manipulation;
             }
             /* Collapse button styling */
-            .btn-link[data-bs-toggle="collapse"] svg {
+            .btn-link[data-bs-toggle="collapse"] svg,
+            .btn[data-bs-toggle="collapse"] svg {
                 transition: transform 0.2s ease;
             }
-            .btn-link[data-bs-toggle="collapse"].collapsed svg {
-                transform: rotate(-90deg);
-            }
-            /* Start collapsed by default */
-            .btn-link[data-bs-toggle="collapse"]:not(.collapsed) svg {
+            .btn-link[data-bs-toggle="collapse"].collapsed svg,
+            .btn[data-bs-toggle="collapse"].collapsed svg {
                 transform: rotate(0deg);
+            }
+            /* Start expanded */
+            .btn-link[data-bs-toggle="collapse"]:not(.collapsed) svg,
+            .btn[data-bs-toggle="collapse"]:not(.collapsed) svg {
+                transform: rotate(180deg);
+            }
+            /* Enhanced button responsiveness */
+            .btn[data-bs-toggle="collapse"] {
+                cursor: pointer;
+                transition: all 0.15s ease-in-out;
+                -webkit-tap-highlight-color: transparent;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            .btn[data-bs-toggle="collapse"]:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+            }
+            .btn[data-bs-toggle="collapse"]:active {
+                transform: translateY(0);
+                transition: all 0.05s ease-in-out;
+            }
+            .btn[data-bs-toggle="collapse"]:focus {
+                outline: none !important;
+                box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.25) !important;
             }
         </style>
     </head>
@@ -245,11 +268,11 @@
                 </div>
             </div>
 
+            <!-- Search bar only shown when no question (pre-search state) -->
+            {% if not question %}
             <!-- Google-style search bar -->
-            <div class="row {% if question %}pt-2{% else %}pt-5{% endif %}">
-                <div
-                    class="{% if question %}col-md-12 d-flex{% else %}col-md-8 mx-auto{% endif %}"
-                >
+            <div class="row pt-5">
+                <div class="col-md-8 mx-auto">
                     <form
                         id="search"
                         hx-get="/search"
@@ -259,13 +282,10 @@
                         hx-swap="innerHTML"
                         hx-push-url="true"
                         hx-on:submit="if(!document.getElementById('example-search-input').value.trim()) { hideAllSpinners(); return false; } return preventSubmitOnSwipe(event) && showSpinner();"
-                        class="{% if question %}d-flex w-100{% endif %}"
                         data-touch-action="auto"
                     >
                         <!-- Search bar with shadow -->
-                        <div
-                            class="{% if question %}flex-grow-1{% else %}position-relative mb-4{% endif %}"
-                        >
+                        <div class="position-relative mb-4">
                             <div class="input-group shadow-sm">
                                 <span
                                     class="input-group-text bg-white border-end-0 rounded-start-pill"
@@ -279,17 +299,15 @@
                                     id="example-search-input"
                                     required
                                     placeholder="Search biohacking experiences"
-                                    value="{% if question %}{{question}}{% endif %}"
+                                    value=""
                                 />
                             </div>
                         </div>
 
                         <!-- Google-style buttons centered -->
-                        <div
-                            class="{% if question %}ms-2 d-flex align-items-center{% else %}d-flex justify-content-center gap-2 mt-4{% endif %}"
-                        >
+                        <div class="d-flex justify-content-center gap-2 mt-4">
                             <button
-                                class="btn {% if question %}btn-primary btn-sm{% else %}btn-light py-2 px-3{% endif %}"
+                                class="btn btn-light py-2 px-3"
                                 type="submit"
                                 id="search-button"
                             >
@@ -298,7 +316,6 @@
                                     <img src="/static/svg-loaders/three-dots.svg" alt="Loading..." width="20" height="20">
                                 </span>
                             </button>
-                            {% if not question %}
                             <button
                                 class="btn btn-light py-2 px-3"
                                 type="button"
@@ -310,11 +327,11 @@
                                     <img src="/static/svg-loaders/three-dots.svg" alt="Loading..." width="20" height="20">
                                 </span>
                             </button>
-                            {% endif %}
                         </div>
                     </form>
                 </div>
             </div>
+            {% endif %}
 
             <!-- Script for I'm Feeling Lucky button and Search spinner -->
             <script>
@@ -365,16 +382,17 @@
                 
                 // Function to hide all spinners
                 function hideAllSpinners() {
-                    document.getElementById('search-text').style.display = 'inline';
-                    document.getElementById('button-spinner').style.display = 'none';
-                    document.getElementById('search-spinner').style.display = 'none';
+                    const searchText = document.getElementById('search-text');
+                    const buttonSpinner = document.getElementById('button-spinner');
+                    const searchSpinner = document.getElementById('search-spinner');
+                    const luckyText = document.getElementById('lucky-text');
+                    const luckySpinner = document.getElementById('lucky-spinner');
                     
-                    if (document.getElementById('lucky-text')) {
-                        document.getElementById('lucky-text').style.display = 'inline';
-                    }
-                    if (document.getElementById('lucky-spinner')) {
-                        document.getElementById('lucky-spinner').style.display = 'none';
-                    }
+                    if (searchText) searchText.style.display = 'inline';
+                    if (buttonSpinner) buttonSpinner.style.display = 'none';
+                    if (searchSpinner) searchSpinner.style.display = 'none';
+                    if (luckyText) luckyText.style.display = 'inline';
+                    if (luckySpinner) luckySpinner.style.display = 'none';
                 }
                 
                 // Add event listeners to detect when the page finishes loading
@@ -411,6 +429,20 @@
             <!-- End Google-style search bar -->
 
             {% block ai_search_results %}
+
+            <!-- Display the search question at top of results -->
+            {% if question %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="mb-4 mt-3">
+                        <h2 class="h4 text-primary mb-2">Search Results for:</h2>
+                        <div class="bg-light rounded-3 p-3 border-start border-primary border-4">
+                            <span class="fs-5 fw-medium text-dark">"{{question}}"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             <!-- This wrapper contains ALL search content -->
             <div id="full-search-results">
@@ -814,12 +846,12 @@
                         id="filter-nav"
                         class="post-search-nav sticky-top"
                         style="
-                            top: 80px;
+                            top: 5px;
                             z-index: 999;
                             background-color: white;
-                            padding: 8px 0 5px 0;
+                            padding: 15px 0 10px 0;
                             box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-                            margin-top: 0;
+                            margin-top: 20px;
                             border-top: 1px solid #eee;
                         "
                     >
@@ -916,6 +948,7 @@
                         }, 1000);
                     </script>
 
+                    {% set card_counter = namespace(value=0) %}
                     {% for biohack_type in biohack_types %}
                     <div
                         class="biohack-section"
@@ -931,6 +964,7 @@
                             class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
                         >
                             {% for biohack in biohack_type.biohacks %}
+                            {% set card_counter.value = card_counter.value + 1 %}
                             <div class="col">
                                 <div class="card h-100">
                                     <div class="card-body">
@@ -941,30 +975,30 @@
                                         </div>
                                         {% if biohack.why_care %}
                                         <div class="mb-3">
-                                            <small class="text-muted fw-medium">Why this matters:</small>
+                                            <small class="text-muted fw-medium">Why this health matters to your question:</small>
                                             <div class="mt-1 text-dark">{{biohack.why_care}}</div>
                                         </div>
                                         {% endif %}
                                         <div class="mt-3 d-flex align-items-center mb-2" style="margin-left: 12px;">
                                             <div>
                                                 <button 
-                                                    class="btn btn-link p-0 text-decoration-none collapsed" 
+                                                    class="btn btn-outline-success btn-sm rounded-pill collapsed" 
                                                     type="button" 
                                                     data-bs-toggle="collapse" 
-                                                    data-bs-target="#collapse-{{biohack.biohack_topic|lower|replace(' ', '-')|replace('(', '')|replace(')', '')}}-{{loop.index0}}" 
+                                                    data-bs-target="#collapse-card-{{card_counter.value}}" 
                                                     aria-expanded="false" 
-                                                    aria-controls="collapse-{{biohack.biohack_topic|lower|replace(' ', '-')|replace('(', '')|replace(')', '')}}-{{loop.index0}}"
-                                                    style="color: #8a4fff; font-weight: 600;"
+                                                    aria-controls="collapse-card-{{card_counter.value}}"
+                                                    style="touch-action: manipulation; user-select: none; min-height: 32px; padding: 6px 12px;"
+                                                    onclick="this.blur(); console.log('Button clicked - Card: {{card_counter.value}}, Target: #collapse-card-{{card_counter.value}}, Topic: {{biohack.biohack_topic}}');"
                                                 >
-                                                    <span class="small">This biohack led to...
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#8a4fff" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                                                        </svg>
-                                                    </span>
+                                                    {{biohack.experiences|length}} resulting experience{% if biohack.experiences|length != 1 %}s{% endif %}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                                    </svg>
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="collapse" id="collapse-{{biohack.biohack_topic|lower|replace(' ', '-')|replace('(', '')|replace(')', '')}}-{{loop.index0}}">
+                                        <div class="collapse" id="collapse-card-{{card_counter.value}}">
                                             <ul class="list-group list-group-flush">
                                             {% for experience in
                                             biohack.experiences %}

@@ -13,7 +13,6 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
-
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
 from website.search import (make_taxonomy, run_search_and_enrich,
                             run_search_query)
@@ -276,7 +275,7 @@ async def search(
         llm_name="gpt-4o",
         max_tokens=100,
         max_retries=0,
-        timeout=1,
+        timeout=2,
     )
     # experiences = run_search_query(
     #     question=question, client=azure_search_client, limit=limit
