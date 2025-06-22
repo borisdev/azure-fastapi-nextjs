@@ -40,7 +40,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v8
+#### Current Version: v8.1
 
 #### Full Deployment Process
 ```bash
@@ -71,6 +71,7 @@ az containerapp show --name nobswebsite --resource-group nobsmed --query "proper
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v8.1: Cleaner UI with search bar removal, fixed collapse button conflicts, improved UX
 - v8: Added why_care field to search results, improved collapse functionality
 - v7: Previous stable version
 
@@ -108,6 +109,13 @@ az containerapp show --name nobswebsite --resource-group nobsmed --query "proper
 - Error handling with loguru logging and clear messages
 - Functions under 50 lines, focused responsibilities
 - snake_case for variables/functions, PascalCase for classes
+
+### Frontend Template Development (Jinja2 + HTMX)
+- **Unique ID Generation**: Use global counters with `{% set counter = namespace(value=0) %}` for truly unique IDs across nested loops
+- **Defensive JavaScript**: Always check for element existence before DOM manipulation (`if (element) element.style...`)
+- **Bootstrap Collapse**: Ensure each collapse button has unique `data-bs-target` and matching element ID
+- **Mobile Touch Handling**: Use `touch-action: manipulation` and proper event handlers for mobile responsiveness
+- **Console Debugging**: Add temporary logging for complex interactions during development
 
 ### Testing Configuration
 - pytest with configured options: `--doctest-modules --capture=no --disable-warnings --tb=long`
