@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+        <style>
+            .product-list {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            .product-item {
+                padding: 15px;
+                margin-bottom: 10px;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                transition: box-shadow 0.2s ease;
+            }
+            .product-item:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .product-title {
+                color: #0066cc;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .product-title:hover {
+                text-decoration: underline;
+            }
+            .product-description {
+                color: #555;
+                margin-top: 8px;
+            }
+            .product-price {
+                color: #B12704;
+                font-weight: bold;
+                margin-top: 8px;
+            }
+        </style>
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="text-center pt-5">
+            <h1>Amazon Products</h1>
+            <p class="lead">Curated health and wellness products available on Amazon</p>
+            <hr class="my-4" />
+        </div>
+
+        <div class="container product-list mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Recommended Health Products</h3>
+                    
+                    <div class="product-item">
+                        <h5><a href="https://amazon.com/dp/B07GJMR2TH" target="_blank" class="product-title">Vitamin D3 5000 IU Supplements</a></h5>
+                        <div class="product-description">
+                            High potency vitamin D3 for immune system support and bone health. Third-party tested for purity and potency.
+                        </div>
+                        <div class="product-price">Price range: $15-25</div>
+                    </div>
+
+                    <div class="product-item">
+                        <h5><a href="https://amazon.com/dp/B01M5GMKRT" target="_blank" class="product-title">Magnesium Glycinate Supplement</a></h5>
+                        <div class="product-description">
+                            Highly bioavailable form of magnesium for muscle relaxation, better sleep, and stress management.
+                        </div>
+                        <div class="product-price">Price range: $20-35</div>
+                    </div>
+
+                    <div class="product-item">
+                        <h5><a href="https://amazon.com/dp/B00GAZGS4Y" target="_blank" class="product-title">Omega-3 Fish Oil Capsules</a></h5>
+                        <div class="product-description">
+                            EPA and DHA omega-3 fatty acids for heart health, brain function, and anti-inflammatory support.
+                        </div>
+                        <div class="product-price">Price range: $25-40</div>
+                    </div>
+
+                    <div class="product-item">
+                        <h5><a href="https://amazon.com/dp/B084L42HGW" target="_blank" class="product-title">Probiotic Multi-Strain Supplement</a></h5>
+                        <div class="product-description">
+                            50 billion CFU multi-strain probiotic for digestive health and immune system support.
+                        </div>
+                        <div class="product-price">Price range: $30-45</div>
+                    </div>
+
+                    <div class="product-item">
+                        <h5><a href="https://amazon.com/dp/B003CT3AM2" target="_blank" class="product-title">Turmeric Curcumin with BioPerine</a></h5>
+                        <div class="product-description">
+                            Anti-inflammatory turmeric extract with black pepper for enhanced absorption and joint health.
+                        </div>
+                        <div class="product-price">Price range: $18-28</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% include 'footer.html' %}
+    </body>
+</html>

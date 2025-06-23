@@ -147,6 +147,16 @@ def about(request: Request):
     )
 
 
+@app.get("/amazon-products")
+def amazon_products(request: Request):
+    return templates.TemplateResponse(
+        name="amazon-products.html",
+        context={
+            "request": request,
+        },
+    )
+
+
 @app.get("/faq")
 def faq(request: Request):
     return templates.TemplateResponse(
