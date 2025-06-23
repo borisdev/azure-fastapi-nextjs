@@ -8,6 +8,22 @@
 
 ### Internal
 
+## v8.3 (2025-06-22)
+
+### Infrastructure Improvements
+- 🛠️ **Script Organization**: Moved Azure setup scripts from `azure_deploy/` package to root directory
+- 📝 **Simplified Naming**: Renamed deployment scripts for clarity:
+  - `create_docker_image_registry.sh` → `setup-registry.sh`
+  - `create_search_service.sh` → `setup-search.sh`  
+  - `create_api_app_container_service.sh` → `setup-containerapp.sh`
+- 🧪 **Integration Testing**: Added comprehensive deployment verification with `test-deployment.py`
+- 📚 **Documentation**: Updated deployment workflows and script references in CLAUDE.md
+
+### Development Experience
+- ⚡ **Better DevOps**: Infrastructure scripts now follow standard conventions at repository root
+- 🔍 **Automated Verification**: Production deployments now include automated health checks
+- 📖 **Clearer Instructions**: Updated documentation reflects actual file locations and best practices
+
 ## v8.1 (2025-06-22)
 
 ### UI/UX Improvements

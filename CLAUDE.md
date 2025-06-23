@@ -40,7 +40,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v8.1
+#### Current Version: v8.3
 
 #### Full Deployment Process
 ```bash
@@ -61,6 +61,9 @@ az containerapp update --name nobswebsite --resource-group nobsmed --image nobsr
 
 # 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
+
+# 7. Run integration tests
+cd .. && poetry run python test-deployment.py
 ```
 
 #### Initial Infrastructure Setup (One-time)
@@ -88,6 +91,7 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v8.3: Infrastructure improvements - reorganized scripts, added integration testing, updated docs
 - v8.1: Cleaner UI with search bar removal, fixed collapse button conflicts, improved UX
 - v8: Added why_care field to search results, improved collapse functionality
 - v7: Previous stable version
@@ -138,6 +142,8 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - pytest with configured options: `--doctest-modules --capture=no --disable-warnings --tb=long`
 - Type checking with pyright (configured in pyrightconfig.json)
 - Test files in `backend/website/tests/`
+- **Integration Testing**: `test-deployment.py` verifies production deployments across all domains
+- Run tests with: `poetry run python test-deployment.py`
 
 ### Environment Setup
 - Backend uses Poetry for dependency management
