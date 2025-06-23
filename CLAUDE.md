@@ -63,6 +63,23 @@ az containerapp update --name nobswebsite --resource-group nobsmed --image nobsr
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
 ```
 
+#### Initial Infrastructure Setup (One-time)
+
+For first-time Azure infrastructure setup, use these bash scripts in the root directory:
+
+```bash
+# 1. Create Azure Container Registry
+./setup-registry.sh
+
+# 2. Create Azure Search Service
+./setup-search.sh
+
+# 3. Create Container App Service
+./setup-containerapp.sh
+```
+
+**Note**: These scripts should only be run once during initial setup. For ongoing deployments, use the Full Deployment Process above.
+
 #### Quick Reference
 - **Registry**: nobsregistry.azurecr.io
 - **Image Name**: nobs_backend_amd64  
@@ -137,6 +154,7 @@ az containerapp show --name nobswebsite --resource-group nobsmed --query "proper
 ## Important Notes
 
 - Mac M1 users must use `--platform linux/amd64` for Azure-compatible builds
+- **Infrastructure Scripts**: Azure setup scripts are located in the root directory for easy access (not in Python packages)
 - Backend currently serves frontend via HTMX templates, not Next.js API routes
 - AI processing runs as background tasks with polling endpoints for real-time updates
 - Search combines traditional BM25 ranking with semantic vector similarity

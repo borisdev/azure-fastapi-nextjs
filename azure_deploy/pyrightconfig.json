@@ -1,7 +1,0 @@
-{
-    "venvPath": ".",
-    "venv": ".venv",
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportInvalidTypeForm": "none"
-    }
-}
