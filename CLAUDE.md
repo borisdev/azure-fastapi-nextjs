@@ -25,6 +25,22 @@ npm run build  # Production build
 npm start  # Production server
 ```
 
+### ETL Operations (Azure Search Indexing)
+```bash
+# Navigate to ETL directory
+cd etl
+
+# Install dependencies
+poetry install
+
+# Upload experiences to Azure Search using CLI
+poetry run python upload_to_azure_search.py --index my-index --all  # Upload everything
+poetry run python upload_to_azure_search.py --index my-index --reddit --reddit-limit 100  # Reddit only
+poetry run python upload_to_azure_search.py --index my-index --studies  # Studies only
+poetry run python upload_to_azure_search.py --index my-index --all --dry-run  # Preview upload
+poetry run python upload_to_azure_search.py --index my-index --studies --studies-dir /custom/path  # Custom directory
+```
+
 ### Testing & Quality
 ```bash
 # Backend tests
@@ -123,6 +139,16 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Components**: Dashboard UI, forms, authentication, search interfaces
 
 ## Development Practices
+
+### ETL Data Processing
+- **CLI Tool**: `etl/upload_to_azure_search.py` provides simplified interface for Azure Search uploads
+- **Data Sources**: 
+  - Reddit experiences from TopicExperiences (Biohacking, Sleep, Pregnancy topics)
+  - Study experiences from JSON files in configured directory
+- **Quality Filtering**: Only experiences with action_score >= 2 and outcomes_score >= 2 are uploaded
+- **Embeddings**: Automatic generation for health_disorder field using Azure OpenAI
+- **Batch Processing**: Uses 50-document batches for efficient upload
+- **Result Tracking**: 2,421 studies successfully uploaded from 44,567 files in last test run
 
 ### Code Style (Backend)
 - Python 3.12+ with full type hints and Pydantic validation

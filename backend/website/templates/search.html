@@ -979,8 +979,47 @@
                                             <div class="mt-1 text-dark">{{biohack.why_care}}</div>
                                         </div>
                                         {% endif %}
+                                        {% set reddit_count = biohack.experiences | selectattr("source_type", "equalto", "reddit") | list | length %}
+                                        {% set study_count = biohack.experiences | selectattr("source_type", "equalto", "study") | list | length %}
+                                        
                                         <div class="mt-3 d-flex align-items-center mb-2" style="margin-left: 12px;">
-                                            <div>
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                {% if reddit_count > 0 and study_count > 0 %}
+                                                <!-- Case: Both types exist - show combined button with breakdown -->
+                                                <button 
+                                                    class="btn btn-outline-primary btn-sm rounded-pill collapsed" 
+                                                    type="button" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#collapse-card-{{card_counter.value}}" 
+                                                    aria-expanded="false" 
+                                                    aria-controls="collapse-card-{{card_counter.value}}"
+                                                    style="touch-action: manipulation; user-select: none; min-height: 32px; padding: 6px 12px;"
+                                                    onclick="this.blur(); console.log('Button clicked - Card: {{card_counter.value}}, Target: #collapse-card-{{card_counter.value}}, Topic: {{biohack.biohack_topic}}');"
+                                                >
+                                                    {{reddit_count}} Personal + {{study_count}} Scientific
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                                    </svg>
+                                                </button>
+                                                {% elif reddit_count > 0 %}
+                                                <!-- Case: Only personal experiences -->
+                                                <button 
+                                                    class="btn btn-outline-info btn-sm rounded-pill collapsed" 
+                                                    type="button" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#collapse-card-{{card_counter.value}}" 
+                                                    aria-expanded="false" 
+                                                    aria-controls="collapse-card-{{card_counter.value}}"
+                                                    style="touch-action: manipulation; user-select: none; min-height: 32px; padding: 6px 12px;"
+                                                    onclick="this.blur(); console.log('Button clicked - Card: {{card_counter.value}}, Target: #collapse-card-{{card_counter.value}}, Topic: {{biohack.biohack_topic}}');"
+                                                >
+                                                    {{reddit_count}} Personal Experience{% if reddit_count != 1 %}s{% endif %}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                                    </svg>
+                                                </button>
+                                                {% elif study_count > 0 %}
+                                                <!-- Case: Only scientific studies -->
                                                 <button 
                                                     class="btn btn-outline-success btn-sm rounded-pill collapsed" 
                                                     type="button" 
@@ -991,11 +1030,12 @@
                                                     style="touch-action: manipulation; user-select: none; min-height: 32px; padding: 6px 12px;"
                                                     onclick="this.blur(); console.log('Button clicked - Card: {{card_counter.value}}, Target: #collapse-card-{{card_counter.value}}, Topic: {{biohack.biohack_topic}}');"
                                                 >
-                                                    {{biohack.experiences|length}} resulting experience{% if biohack.experiences|length != 1 %}s{% endif %}
+                                                    {{study_count}} Scientific Stud{% if study_count == 1 %}y{% else %}ies{% endif %}
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                                                     </svg>
                                                 </button>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="collapse" id="collapse-card-{{card_counter.value}}">
