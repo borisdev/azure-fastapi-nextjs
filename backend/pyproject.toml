@@ -63,6 +63,10 @@ dev = [
 where = ["."]
 include = ["website*"]
 
+
+[tool.poetry.group.dev.dependencies]
+requests = "^2.32.4"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
