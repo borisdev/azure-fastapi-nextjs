@@ -56,7 +56,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v8.3
+#### Current Version: v8.4
 
 #### Full Deployment Process
 ```bash
@@ -67,13 +67,13 @@ cd backend
 az acr login --name nobsregistry
 
 # 3. Build new Docker image (increment version number)
-docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v9 .
+docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v8.5 .
 
 # 4. Push image to registry
-docker push nobsregistry.azurecr.io/nobs_backend_amd64:v9
+docker push nobsregistry.azurecr.io/nobs_backend_amd64:v8.5
 
 # 5. Update container app to use new image
-az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v9
+az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v8.5
 
 # 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
@@ -107,6 +107,7 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v8.4: Enhanced button UX with type-specific labeling - separate buttons for personal experiences, scientific studies, and mixed content
 - v8.3: Infrastructure improvements - reorganized scripts, added integration testing, updated docs
 - v8.1: Cleaner UI with search bar removal, fixed collapse button conflicts, improved UX
 - v8: Added why_care field to search results, improved collapse functionality

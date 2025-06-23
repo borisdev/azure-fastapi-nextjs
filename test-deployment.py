@@ -40,14 +40,26 @@ def test_search_endpoint(base_url: str) -> bool:
         content = response.text.lower()
         required_elements = [
             "search results for",
-            "vitamin d deficiency",
-            "resulting experience"
+            "vitamin d deficiency"
+        ]
+        
+        # Check for new button text patterns (any of these should be present)
+        button_patterns = [
+            "personal experience",  # For Reddit-only buttons
+            "scientific stud",      # For study-only buttons  
+            "personal + ",          # For mixed content buttons
         ]
         
         for element in required_elements:
             if element not in content:
                 print(f"❌ Missing required element: {element}")
                 return False
+        
+        # Check that at least one button pattern exists        
+        button_found = any(pattern in content for pattern in button_patterns)
+        if not button_found:
+            print(f"❌ Missing button patterns: {button_patterns}")
+            return False
                 
         return True
     except Exception as e:
