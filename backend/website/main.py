@@ -13,16 +13,22 @@ from logfire.propagate import attach_context, get_context
 from pydantic import BaseModel
 from rich import print
 from rich.traceback import install
+
+from website.jennas_amazon_products import (InfantProduct, baby_carrier_wraps,
+                                            bottle_cleaners, bottle_dryers,
+                                            bottle_sanitizers, data,
+                                            infant_bath_tubs,
+                                            infant_care_books,
+                                            infant_high_chairs,
+                                            infant_laundry_detergents,
+                                            infant_nursing_pillows,
+                                            non_toxic_bassinets,
+                                            non_toxic_infant_car_seats,
+                                            non_toxic_playmats,
+                                            post_delivery_healing_products)
 from website.models import AISummary, DynamicBiohackingTaxonomy, Experience
 from website.search import (make_taxonomy, run_search_and_enrich,
                             run_search_query)
-from website.jennas_amazon_products import (
-    data, infant_bath_tubs, infant_laundry_detergents, infant_care_books,
-    bottle_cleaners, bottle_sanitizers, bottle_dryers, infant_high_chairs,
-    infant_nursing_pillows, non_toxic_playmats, baby_carrier_wraps,
-    post_delivery_healing_products, non_toxic_infant_car_seats, non_toxic_bassinets,
-    InfantProduct
-)
 from website.settings import azure_search_client, web_app_env
 
 install()
@@ -131,14 +137,16 @@ def robots(request: Request):
     else:
         # data = """User-agent: *\nAllow: /"""
         # User-agent: SemrushBot Disallow: /
+        # Disallow: /
+        # Disallow: /
+        # Allow: /faq
+        # Allow: /about
+        # Allow: /amazon-products
         data = """
             User-agent: SEMrushBot
-            Disallow: /
 
             User-agent: *
-            Disallow: /
-            Allow: /faq
-            Allow: /about
+            Allow: /
         """
 
         return data
@@ -161,16 +169,16 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
     """
     if not products:
         return {"title": title, "columns": [], "products": []}
-    
+
     # Default field labels - can be overridden
     default_labels = {
         "product_url": "Product",
-        "name": "Product", 
+        "name": "Product",
         "title": "Product",
         "age_range": "Age Range",
         "material": "Material",
         "materials": "Materials",
-        "comfort_support": "Comfort & Support", 
+        "comfort_support": "Comfort & Support",
         "comfort": "Comfort",
         "cleaning": "Cleaning",
         "cleaning_effectiveness": "Cleaning",
@@ -193,78 +201,82 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
         "ease_of_install": "Installation",
         "weight": "Weight",
         "purpose": "Purpose",
-        "effectiveness": "Effectiveness"
+        "effectiveness": "Effectiveness",
     }
-    
+
     if field_labels:
         default_labels.update(field_labels)
-    
+
     # Get all possible fields from the first product
     sample_product = products[0]
-    if hasattr(sample_product, '__dict__'):
+    if hasattr(sample_product, "__dict__"):
         all_fields = list(sample_product.__dict__.keys())
     else:
         all_fields = list(sample_product.keys())
-    
+
     # Find fields that have at least one non-None, non-empty value
     useful_fields = []
     for field in all_fields:
-        if field in ['reference_url', 'amazon_url']:  # Skip these fields
+        if field in ["reference_url", "amazon_url"]:  # Skip these fields
             continue
-            
+
         has_data = False
         for product in products:
             if hasattr(product, field):
                 value = getattr(product, field)
             else:
                 value = product.get(field)
-                
-            if value is not None and str(value).strip() and str(value).strip().lower() != 'n/a':
+
+            if (
+                value is not None
+                and str(value).strip()
+                and str(value).strip().lower() != "n/a"
+            ):
                 has_data = True
                 break
-        
+
         if has_data:
             useful_fields.append(field)
-    
+
     # Create column configurations
     columns = []
-    
+
     # First add the product name/link column
-    if any(field in useful_fields for field in ['product_url', 'name', 'title']):
-        columns.append({
-            "field": "name",  # Use name as the primary field, fallback handled in template
-            "label": "Product",
-            "is_link": True
-        })
-    
+    if any(field in useful_fields for field in ["product_url", "name", "title"]):
+        columns.append(
+            {
+                "field": "name",  # Use name as the primary field, fallback handled in template
+                "label": "Product",
+                "is_link": True,
+            }
+        )
+
     # Then add other fields except the ones we used for the link
     for field in useful_fields:
-        if field not in ['product_url', 'name', 'title']:
+        if field not in ["product_url", "name", "title"]:
             column = {
                 "field": field,
-                "label": default_labels.get(field, field.replace('_', ' ').title()),
-                "is_link": False
+                "label": default_labels.get(field, field.replace("_", " ").title()),
+                "is_link": False,
             }
             columns.append(column)
-    
+
     # Add values to each product for easier template access
     enhanced_products = []
     for product in products:
         product_dict = {"_product": product}
         for column in columns:
             if column["is_link"]:
-                product_dict["_link_text"] = product.display_name or product.name or product.title or "Product"
+                product_dict["_link_text"] = (
+                    product.display_name or product.name or product.title or "Product"
+                )
                 product_dict["_link_url"] = product.product_url or "#"
             else:
                 value = getattr(product, column["field"], None)
                 product_dict[column["field"]] = value if value else "N/A"
         enhanced_products.append(product_dict)
-    
-    return {
-        "title": title,
-        "columns": columns,
-        "products": enhanced_products
-    }
+
+    return {"title": title, "columns": columns, "products": enhanced_products}
 
 
 @app.get("/amazon-products")
@@ -272,20 +284,41 @@ def amazon_products(request: Request):
     # Convert all dictionaries to InfantProduct objects for validation
     try:
         infant_bath_tubs_objects = [InfantProduct(**item) for item in infant_bath_tubs]
-        infant_laundry_detergents_objects = [InfantProduct(**item) for item in infant_laundry_detergents]
-        infant_care_books_objects = [InfantProduct(**item) for item in infant_care_books]
+        infant_laundry_detergents_objects = [
+            InfantProduct(**item) for item in infant_laundry_detergents
+        ]
+        infant_care_books_objects = [
+            InfantProduct(**item) for item in infant_care_books
+        ]
         bottle_cleaners_objects = [InfantProduct(**item) for item in bottle_cleaners]
-        bottle_sanitizers_objects = [InfantProduct(**item) for item in bottle_sanitizers]
+        bottle_sanitizers_objects = [
+            InfantProduct(**item) for item in bottle_sanitizers
+        ]
         bottle_dryers_objects = [InfantProduct(**item) for item in bottle_dryers]
-        infant_high_chairs_objects = [InfantProduct(**item) for item in infant_high_chairs]
-        infant_nursing_pillows_objects = [InfantProduct(**item) for item in infant_nursing_pillows]
-        non_toxic_playmats_objects = [InfantProduct(**item) for item in non_toxic_playmats]
-        baby_carrier_wraps_objects = [InfantProduct(**item) for item in baby_carrier_wraps]
-        post_delivery_healing_products_objects = [InfantProduct(**item) for item in post_delivery_healing_products]
-        non_toxic_infant_car_seats_objects = [InfantProduct(**item) for item in non_toxic_infant_car_seats]
-        non_toxic_bassinets_objects = [InfantProduct(**item) for item in non_toxic_bassinets]
+        infant_high_chairs_objects = [
+            InfantProduct(**item) for item in infant_high_chairs
+        ]
+        infant_nursing_pillows_objects = [
+            InfantProduct(**item) for item in infant_nursing_pillows
+        ]
+        non_toxic_playmats_objects = [
+            InfantProduct(**item) for item in non_toxic_playmats
+        ]
+        baby_carrier_wraps_objects = [
+            InfantProduct(**item) for item in baby_carrier_wraps
+        ]
+        post_delivery_healing_products_objects = [
+            InfantProduct(**item) for item in post_delivery_healing_products
+        ]
+        non_toxic_infant_car_seats_objects = [
+            InfantProduct(**item) for item in non_toxic_infant_car_seats
+        ]
+        non_toxic_bassinets_objects = [
+            InfantProduct(**item) for item in non_toxic_bassinets
+        ]
     except Exception as e:
         from loguru import logger
+
         logger.error(f"Error converting dictionaries to InfantProduct objects: {e}")
         # Fall back to dictionary data if conversion fails
         infant_bath_tubs_objects = infant_bath_tubs
@@ -305,7 +338,9 @@ def amazon_products(request: Request):
     # Create dynamic table configurations
     product_tables = [
         create_table_config(infant_bath_tubs_objects, "Infant Bath Tubs"),
-        create_table_config(infant_laundry_detergents_objects, "Baby Laundry Detergents"),
+        create_table_config(
+            infant_laundry_detergents_objects, "Baby Laundry Detergents"
+        ),
         create_table_config(infant_care_books_objects, "Baby Care Books"),
         create_table_config(bottle_cleaners_objects, "Bottle Cleaners"),
         create_table_config(bottle_sanitizers_objects, "Bottle Sanitizers"),
@@ -314,8 +349,12 @@ def amazon_products(request: Request):
         create_table_config(infant_nursing_pillows_objects, "Baby Nursing Pillows"),
         create_table_config(non_toxic_playmats_objects, "Non-Toxic Play Mats"),
         create_table_config(baby_carrier_wraps_objects, "Baby Carrier Wraps"),
-        create_table_config(post_delivery_healing_products_objects, "Post Delivery Healing Products"),
-        create_table_config(non_toxic_infant_car_seats_objects, "Non-Toxic Infant Car Seats"),
+        create_table_config(
+            post_delivery_healing_products_objects, "Post Delivery Healing Products"
+        ),
+        create_table_config(
+            non_toxic_infant_car_seats_objects, "Non-Toxic Infant Car Seats"
+        ),
         create_table_config(non_toxic_bassinets_objects, "Non-Toxic Bassinets"),
     ]
 
