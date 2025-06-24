@@ -6,12 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 - Setup env: `poetry install`
-- Run server: `uvicorn website.main:app --reload`
-- Run all tests: `pytest`
-- Run single test: `pytest website/tests/test_file.py::test_function -v`
+- Run server locally: `poetry run uvicorn website.main:app --reload`
+- Run all tests: `poetry run pytest`
+- Run single test: `poetry run pytest website/tests/test_file.py::test_function -v`
 - Test options: `--doctest-modules --capture=no --disable-warnings --tb=long`
-- Type check: `pyright`
+- Type check: `poetry run pyright`
 - Docker build: `docker build -f website.Dockerfile -t nobsmed-website .`
+- **IMPORTANT**: Always use `poetry run` prefix for Python commands in backend directory
+- **TESTING**: Use existing Docker container server for testing - it auto-reloads on file changes, much faster than starting new processes
 
 ## Code Style
 - Imports: Standard library → Third-party → Local modules (alphabetized within groups)
