@@ -58,28 +58,26 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 #### Current Version: v8.5
 
-#### Full Deployment Process
+#### Deployment Process (v8.6+)
 ```bash
-# 1. Navigate to backend directory
+# 1. Build and push new Docker image
 cd backend
-
-# 2. Login to Azure Container Registry
 az acr login --name nobsregistry
-
-# 3. Build new Docker image (increment version number)
 docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v8.6 .
-
-# 4. Push image to registry
 docker push nobsregistry.azurecr.io/nobs_backend_amd64:v8.6
 
-# 5. Update container app to use new image
+# 2. Deploy using simplified script (automatically handles version)
+cd .. && ./deploy-containerapp.sh v8.6
+
+# 3. Run integration tests
+poetry run python test-deployment.py
+```
+
+#### Legacy Deployment Process (Manual)
+```bash
+# For reference - the old manual process (use CLI script above instead)
 az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v8.6
-
-# 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
-
-# 7. Run integration tests
-cd .. && poetry run python test-deployment.py
 ```
 
 #### Initial Infrastructure Setup (One-time)
@@ -93,11 +91,27 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 # 2. Create Azure Search Service
 ./setup-search.sh
 
-# 3. Create Container App Service
-./setup-containerapp.sh
+# 3. Create Container App Service (one-time) 
+./setup-containerapp.sh v8.6
 ```
 
-**Note**: These scripts should only be run once during initial setup. For ongoing deployments, use the Full Deployment Process above.
+**Note**: These setup scripts should only be run once during initial setup. For ongoing deployments, use the Full Deployment Process above or the simplified `./deploy-containerapp.sh` script.
+
+#### Script Usage Examples
+
+```bash
+# Deploy new version
+./deploy-containerapp.sh v8.6
+
+# Deploy to different environment  
+./deploy-containerapp.sh v8.6 staging
+
+# Check current deployed version
+./check-deployed-version.sh
+
+# Show script help
+./deploy-containerapp.sh --help
+```
 
 #### Quick Reference
 - **Registry**: nobsregistry.azurecr.io
@@ -107,7 +121,8 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
-- v8.5: Added Amazon Products page with pregnancy-focused product listings and affiliate links
+- v8.6: Simplified deployment with CLI arguments - scripts now accept version as parameter, removed redundant .env variables
+- v8.5: Added Amazon Products page with one product and placeholder content
 - v8.4: Enhanced button UX with type-specific labeling - separate buttons for personal experiences, scientific studies, and mixed content
 - v8.3: Infrastructure improvements - reorganized scripts, added integration testing, updated docs
 - v8.1: Cleaner UI with search bar removal, fixed collapse button conflicts, improved UX
