@@ -56,7 +56,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v8.5
+#### Current Version: v8.6
 
 #### Full Deployment Process
 ```bash
@@ -107,6 +107,7 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v8.6: Dynamic table system for Amazon Products - automatically hides N/A columns, cleaned up price ranges, improved page layout
 - v8.5: Added Amazon Products page with pregnancy-focused product listings and affiliate links
 - v8.4: Enhanced button UX with type-specific labeling - separate buttons for personal experiences, scientific studies, and mixed content
 - v8.3: Infrastructure improvements - reorganized scripts, added integration testing, updated docs
