@@ -17,7 +17,6 @@ class HealthHackProduct(BaseModel):
 
 
 class InfantProduct(BaseModel):
-    product_url: str | None = None
     name: str | None = None
     title: str | None = None  # For books
     age_range: str | None = None
@@ -56,6 +55,11 @@ class InfantProduct(BaseModel):
     def display_name(self) -> str:
         """Return the appropriate name/title for display"""
         return self.name or self.title or "Unknown Product"
+    
+    @property
+    def product_url(self) -> str | None:
+        """Backwards compatibility - returns amazon_url"""
+        return self.amazon_url
 
 
 data = []
@@ -88,7 +92,6 @@ data.append(
 
 infant_bath_tubs = [
     {
-        "product_url": "https://amzn.to/4npcr7B",
         "name": "Skip Hop Moby Smart Sling 3‑Stage",
         "age_range": "0–6 mo (up to 20 lb)",
         "material": "BPA- & PVC-free; PP & polyester sling",
@@ -103,9 +106,6 @@ infant_bath_tubs = [
         "biggest_positive": "Versatile 3-stage design that grows with baby; adjustable sling offers excellent newborn support.",
     },
     {
-        # https://amzn.to/3FVGZgm
-        "product_url": "https://amzn.to/3FVGZgm",
-        "name": "Angelcare Soft‑Touch Bath Support",
         "age_range": "0–6 mo (up to 20 lb)",
         "material": "Mesh with TPE/PP plastic; BPA-, PVC-, latex-, phthalate-free",
         "comfort_support": "Ergonomic cradle for upright newborn support",
@@ -119,9 +119,6 @@ infant_bath_tubs = [
         "biggest_positive": "Lightweight, hygienic design that dries quickly to prevent mold; very easy to store.",
     },
     {
-        # https://amzn.to/4lkvBcL
-        "product_url": "https://amzn.to/4lkvBcL",
-        "name": "Baby Delight Cushy Nest Cloud",
         "age_range": "0–6 mo (up to ~20 lb)",
         "material": "GOTS organic cotton on rust-free frame",
         "comfort_support": "Soft, snug cushion for cozy fit",
@@ -135,9 +132,6 @@ infant_bath_tubs = [
         "biggest_positive": "Organic cotton cushion offers superior softness and comfort for newborns.",
     },
     {
-        # https://amzn.to/45FNNJu
-        "product_url": "https://amzn.to/45FNNJu",
-        "name": "Puj Flyte Compact Infant Bath",
         "age_range": "0–2 mo (~13 lb), some up to ~7 mo",
         "material": "Closed-cell foam; BPA- & PVC-free, mold-resistant",
         "comfort_support": "Cradle-style sink support",
@@ -154,9 +148,6 @@ infant_bath_tubs = [
 
 infant_laundry_detergents = [
     {
-        # https://amzn.to/40kdY4E
-        "product_url": "https://amzn.to/40kdY4E",
-        "name": "Dreft Stage 1: Newborn Liquid Laundry Detergent",
         "safety": "Hypoallergenic, pediatrician-recommended, dye- and phosphate-free",
         "fragrance": "Mild scent, designed specifically for newborns",
         "cleaning": "Effective on baby stains; gentle formula",
@@ -168,11 +159,7 @@ infant_laundry_detergents = [
         "biggest_positive": "Trusted brand with long-standing pediatrician recommendations and gentle cleaning",
     },
     {
-        # Babyganics 3X Baby Laundry Detergent
-        # https://amzn.to/44lhkWw
-        "product_url": "https://amzn.to/44lhkWw",
-        "name": "Babyganics 3X Baby Laundry Detergent",
-        "safety": "Plant-based, hypoallergenic, free of sulfates, dyes, and phthalates",
+        # Babyganics 3X Baby Laundry Detergent        "safety": "Plant-based, hypoallergenic, free of sulfates, dyes, and phthalates",
         "fragrance": "Fragrance-free and dye-free version available",
         "cleaning": "Strong cleaning power on tough stains while gentle on fabrics",
         "ease_of_use": "Concentrated liquid, less product per load",
@@ -183,9 +170,6 @@ infant_laundry_detergents = [
         "biggest_positive": "Excellent stain removal with natural ingredients, suitable for sensitive skin",
     },
     {
-        # https://amzn.to/4ei9KQZ
-        "product_url": "https://amzn.to/4ei9KQZ",
-        "name": "Seventh Generation Free & Clear Baby Laundry Detergent",
         "safety": "EPA Safer Choice certified, free of dyes and fragrances",
         "fragrance": "Unscented",
         "cleaning": "Good stain removal, eco-friendly and biodegradable",
@@ -197,11 +181,7 @@ infant_laundry_detergents = [
         "biggest_positive": "Highly eco-friendly and non-toxic formula, great for sensitive baby skin",
     },
     {
-        # Molly’s Suds Laundry Powder
-        # https://amzn.to/46birdL
-        "product_url": "https://amzn.to/46birdL",
-        "name": "Molly’s Suds Laundry Powder",
-        "safety": "100% plant-based, non-toxic, fragrance-free, safe for sensitive skin",
+        # Molly’s Suds Laundry Powder        "safety": "100% plant-based, non-toxic, fragrance-free, safe for sensitive skin",
         "fragrance": "Fragrance-free",
         "cleaning": "Powerful stain-fighting even without harsh chemicals",
         "ease_of_use": "Powder form, easy to store and measure",
@@ -215,9 +195,6 @@ infant_laundry_detergents = [
 
 infant_care_books = [
     {
-        # https://amzn.to/45Dn4gD
-        "product_url": "https://amzn.to/45Dn4gD",
-        "title": "What to Expect the First Year",
         "author": "Heidi Murkoff",
         "content_quality": "Comprehensive, covers all aspects of infant care month-by-month",
         "ease_of_understanding": "Written in accessible, parent-friendly language",
@@ -229,9 +206,6 @@ infant_care_books = [
         "biggest_positive": "Great for new parents wanting a detailed month-to-month guide",
     },
     {
-        # https://amzn.to/469uIzk
-        "product_url": "https://amzn.to/469uIzk",
-        "title": "Caring for Your Baby and Young Child, 7th Edition",
         "author": "American Academy of Pediatrics",
         "content_quality": "Highly authoritative, medically reviewed, covers health and safety extensively",
         "ease_of_understanding": "Clear but more technical language, reference style",
@@ -243,9 +217,6 @@ infant_care_books = [
         "biggest_positive": "Trusted source for accurate and current infant health guidance",
     },
     {
-        # https://amzn.to/45zctTO
-        "product_url": "https://amzn.to/45zctTO",
-        "title": "The Happiest Baby on the Block",
         "author": "Harvey Karp, M.D.",
         "content_quality": "Focuses on soothing techniques to reduce crying and improve sleep",
         "ease_of_understanding": "Engaging and easy to read with practical advice",
@@ -257,9 +228,6 @@ infant_care_books = [
         "biggest_positive": "Highly effective, widely praised for improving infant sleep and reducing fussiness",
     },
     {
-        # https://amzn.to/4k7vlNq
-        "product_url": "https://amzn.to/4k7vlNq",
-        "title": "Baby 411: Clear Answers & Smart Advice For Your Baby's First Year",
         "author": "Ari Brown, M.D., and Denise Fields",
         "content_quality": "Practical, question-and-answer format covering broad topics",
         "ease_of_understanding": "Very accessible with concise explanations",
@@ -274,7 +242,6 @@ infant_care_books = [
 
 bottle_cleaners = [
     {
-        "product_url": "https://www.amazon.com/Dr-Browns-Bottle-Brush/dp/B00124N9HY/ref=nosim?tag=nobsmed07-20",
         "name": "Dr. Brown’s Baby Bottle Brush",
         "cleaning_effectiveness": "Soft, dense bristles clean bottles thoroughly including hard-to-reach areas",
         "safety": "BPA-free materials, gentle on baby bottles",
@@ -286,7 +253,6 @@ bottle_cleaners = [
         "biggest_positive": "Effective and affordable; trusted brand with great cleaning reach",
     },
     {
-        "product_url": "https://www.amazon.com/Munchkin-Bristle-Bottle-Brush/dp/B00I2SK0OS/ref=nosim?tag=nobsmed07-20",
         "name": "Munchkin Bristle Bottle Brush",
         "cleaning_effectiveness": "Firm bristles for deep cleaning, angled for easy access",
         "safety": "BPA-free materials, non-toxic",
@@ -298,7 +264,6 @@ bottle_cleaners = [
         "biggest_positive": "Good cleaning power with ergonomic design",
     },
     {
-        "product_url": "https://www.amazon.com/OXO-Tot-Bottle-Brush-Nipple/dp/B00HY46DXQ/ref=nosim?tag=nobsmed07-20",
         "name": "OXO Tot Bottle Brush with Nipple Cleaner",
         "cleaning_effectiveness": "Soft bristles with flexible head for thorough cleaning",
         "safety": "BPA-free, phthalate-free",
@@ -310,7 +275,6 @@ bottle_cleaners = [
         "biggest_positive": "High-quality, versatile brush with excellent cleaning reach",
     },
     {
-        "product_url": "https://www.amazon.com/First-Years-Quick-Clean-Bottle/dp/B007TV5E0K/ref=nosim?tag=nobsmed07-20",
         "name": "The First Years Quick Clean Bottle Brush",
         "cleaning_effectiveness": "Soft bristles with integrated nipple cleaner; cleans quickly",
         "safety": "BPA-free materials",
@@ -325,7 +289,6 @@ bottle_cleaners = [
 
 bottle_sanitizers = [
     {
-        "product_url": "https://www.amazon.com/Baby-Brezza-One-Step-Sterilizer/dp/B071R1NQ23/ref=nosim?tag=nobsmed07-20",
         "name": "Baby Brezza One Step Sterilizer and Dryer",
         "sanitization": "Steam sterilization kills 99.9% of bacteria, combined drying reduces moisture",
         "safety": "BPA-free materials, automatic shut-off for safety",
@@ -337,7 +300,6 @@ bottle_sanitizers = [
         "biggest_positive": "Convenient sterilization and drying in one appliance; saves time",
     },
     {
-        "product_url": "https://www.amazon.com/Philips-Avent-Microwave-Sterilizer-SCF284/dp/B00D49F2Q0/ref=nosim?tag=nobsmed07-20",
         "name": "Philips Avent Microwave Steam Sterilizer",
         "sanitization": "Effective steam sterilization in minutes using microwave",
         "safety": "BPA-free materials; microwave safe",
@@ -349,7 +311,6 @@ bottle_sanitizers = [
         "biggest_positive": "Fast and convenient; great for travel or small kitchens",
     },
     {
-        "product_url": "https://www.amazon.com/Munchkin-Steam-Guard-Electric-Sterilizer/dp/B00S0HQ7WO/ref=nosim?tag=nobsmed07-20",
         "name": "Munchkin Steam Guard Electric Sterilizer",
         "sanitization": "Steam sterilization with safety guard; kills 99.9% germs",
         "safety": "BPA-free; automatic shutoff and safety guard",
@@ -361,7 +322,6 @@ bottle_sanitizers = [
         "biggest_positive": "Affordable electric sterilizer with safety features and good capacity",
     },
     {
-        "product_url": "https://www.amazon.com/Wabi-Baby-Electric-Sterilizer/dp/B07NYRFM4G/ref=nosim?tag=nobsmed07-20",
         "name": "Wabi Baby Electric Steam Sterilizer",
         "sanitization": "Steam sterilization with drying function; compact design",
         "safety": "BPA-free, automatic shutoff, quiet operation",
@@ -376,7 +336,6 @@ bottle_sanitizers = [
 
 bottle_dryers = [
     {
-        "product_url": "https://www.amazon.com/Baby-Brezza-One-Step-Sterilizer/dp/B071R1NQ23/ref=nosim?tag=nobsmed07-20",
         "name": "Baby Brezza One Step Sterilizer and Dryer",
         "drying_effectiveness": "Built-in fan drying after steam sterilization; reduces moisture effectively",
         "safety": "BPA-free materials, automatic shut-off",
@@ -388,7 +347,6 @@ bottle_dryers = [
         "biggest_positive": "Convenient all-in-one sterilizer and dryer; saves counter space and time",
     },
     {
-        "product_url": "https://www.amazon.com/Tommee-Tippee-Electric-Bottle-Accessory/dp/B00B7UI9KK/ref=nosim?tag=nobsmed07-20",
         "name": "Tommee Tippee Electric Bottle and Accessory Dryer",
         "drying_effectiveness": "Uses heated air to dry bottles and accessories quickly",
         "safety": "BPA-free; cool-touch exterior",
@@ -400,7 +358,6 @@ bottle_dryers = [
         "biggest_positive": "Efficient drying, fits various bottle types and accessories",
     },
     {
-        "product_url": "https://www.amazon.com/Dr-Browns-Bottle-Warmer-Dryer/dp/B07Q7ZTW6M/ref=nosim?tag=nobsmed07-20",
         "name": "Dr. Brown’s Bottle Warmer and Dryer",
         "drying_effectiveness": "Gentle warm air drying combined with warming feature",
         "safety": "BPA-free; automatic shut-off",
@@ -412,7 +369,6 @@ bottle_dryers = [
         "biggest_positive": "Convenient 2-in-1 device; saves space and time",
     },
     {
-        "product_url": "https://www.amazon.com/Munchkin-Warm-Glow-Bottle-Warmer/dp/B07RZ95N3Q/ref=nosim?tag=nobsmed07-20",
         "name": "Munchkin Warm Glow Bottle Warmer and Dryer",
         "drying_effectiveness": "Uses warm air to dry and warm bottles with gentle temperature control",
         "safety": "BPA-free materials; auto shut-off",
@@ -427,7 +383,6 @@ bottle_dryers = [
 
 infant_high_chairs = [
     {
-        "product_url": "https://amzn.to/44hNBh5",
         "name": "Graco Blossom 6-in-1 Convertible High Chair",
         "safety": "Meets ASTM standards, 5-point harness",
         "comfort": "Padded seat with adjustable recline",
@@ -435,16 +390,12 @@ infant_high_chairs = [
         "adjustability": "6 modes from infant to toddler and booster",
         "price_range": "$150–200",
         "reference_url": "https://www.babylist.com/hello-baby/best-high-chair",
-        "amazon_url": "https://www.amazon.com/Graco-Blossom-Convertible-High-Chair/dp/B00I8JZ1H4/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B08C6ZD793/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Large footprint; bulky when fully assembled",
         "biggest_positive": "Grows with child, versatile and durable",
     },
     {
-        # Joovy Nook High Chair
-        # https://amzn.to/4npgRvd
-        "product_url": "https://amzn.to/4npgRvd",
-        "name": "Joovy Nook High Chair",
-        "safety": "5-point harness, meets safety standards",
+        # Joovy Nook High Chair        "safety": "5-point harness, meets safety standards",
         "comfort": "Padded seat, reclines slightly",
         "cleaning": "Removable seat pad; dishwasher-safe trays",
         "adjustability": "Compact fold; fits in tight spaces",
@@ -455,30 +406,24 @@ infant_high_chairs = [
         "biggest_positive": "Compact fold and sleek design ideal for small spaces",
     },
     {
-        # https://amzn.to/3ZKr2QS
-        "product_url": "https://amzn.to/3ZKr2QS",
-        "name": "Inglesina Fast Table Chair",
         "safety": "Meets safety standards, secure clamp for table attachment",
         "comfort": "Padded fabric seat with backrest",
         "cleaning": "Removable washable cover",
         "adjustability": "Attaches directly to table; portable",
         "price_range": "$100–120",
         "reference_url": "https://www.babygearlab.com/reviews/feeding/high-chairs/inglesina-fast",
-        "amazon_url": "https://www.amazon.com/Inglesina-Fast-Table-Chair/dp/B00O7SS3AA/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B00IOGIM9S/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Not suitable for very heavy babies; limited to table use",
         "biggest_positive": "Portable and space-saving; great for travel or small kitchens",
     },
     {
-        # https://amzn.to/43YvmON
-        "product_url": "https://amzn.to/43YvmON",
-        "name": "Fisher-Price SpaceSaver High Chair",
         "safety": "3-point harness; stable design",
         "comfort": "Padded seat insert, removable",
         "cleaning": "Removable, machine-washable pad; dishwasher-safe tray",
         "adjustability": "Attaches to most chairs; folds flat",
         "price_range": "$50–70",
         "reference_url": "https://www.babylist.com/hello-baby/best-space-saver-high-chair",
-        "amazon_url": "https://www.amazon.com/Fisher-Price-SpaceSaver-High-Chair/dp/B00FK1K1UU/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B08KFQK84Q/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Less secure than standalone high chairs; limited weight capacity",
         "biggest_positive": "Affordable, easy to use, great for smaller spaces",
     },
@@ -486,7 +431,6 @@ infant_high_chairs = [
 
 infant_nursing_pillows = [
     {
-        "product_url": "https://www.amazon.com/Boppy-Original-Nursing-Pillow-Positioner/dp/B001GX7F70/ref=nosim?tag=nobsmed07-20",
         "name": "Boppy Original Nursing Pillow and Positioner",
         "comfort_support": "C-shaped pillow provides good arm and back support",
         "cleaning": "Machine washable cover; removable and easy to clean",
@@ -498,7 +442,6 @@ infant_nursing_pillows = [
         "biggest_positive": "Versatile, widely used, and easy to clean",
     },
     {
-        "product_url": "https://www.amazon.com/My-Brest-Friend-Nursing-Pillow/dp/B00B20B3GG/ref=nosim?tag=nobsmed07-20",
         "name": "My Brest Friend Nursing Pillow",
         "comfort_support": "Wrap-around design offers firm, flat surface support with adjustable strap",
         "cleaning": "Machine washable cover; removable",
@@ -510,7 +453,6 @@ infant_nursing_pillows = [
         "biggest_positive": "Excellent support and positioning; highly rated by moms",
     },
     {
-        "product_url": "https://www.amazon.com/Infantino-Elevate-Adjustable-Nursing-Pillow/dp/B00I3Q3QTS/ref=nosim?tag=nobsmed07-20",
         "name": "Infantino Elevate Adjustable Nursing Pillow",
         "comfort_support": "Adjustable height for customizable support",
         "cleaning": "Machine washable cover; removable",
@@ -522,14 +464,13 @@ infant_nursing_pillows = [
         "biggest_positive": "Affordable and customizable height support",
     },
     {
-        "product_url": "https://www.amazon.com/Leachco-Cuddle-U-Original-Nursing-Pillow/dp/B0006VXCY6/ref=nosim?tag=nobsmed07-20",
         "name": "Leachco Cuddle-U Original Nursing Pillow",
         "comfort_support": "Firm with plush cover; U-shaped for versatile use",
         "cleaning": "Machine washable cover; removable",
         "safety": "Good support for both mom and baby",
         "price_range": "$40–50",
         "reference_url": "https://www.babylist.com/hello-baby/best-nursing-pillow",
-        "amazon_url": "https://www.amazon.com/Leachco-Cuddle-U-Original-Nursing-Pillow/dp/B0006VXCY6/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B01M7POA7N/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Bulky design can be less portable",
         "biggest_positive": "Versatile use beyond nursing; supportive and comfortable",
     },
@@ -537,7 +478,6 @@ infant_nursing_pillows = [
 
 non_toxic_playmats = [
     {
-        "product_url": "https://www.amazon.com/Skip-Hop-Playspot-Soft-Foam/dp/B077PLVLCX/ref=nosim?tag=nobsmed07-20",
         "name": "Skip Hop Playspot Foam Floor Tiles",
         "material_safety": "Phthalate-free, BPA-free EVA foam",
         "comfort": "Soft foam padding; cushioned for infant play",
@@ -550,7 +490,6 @@ non_toxic_playmats = [
         "biggest_positive": "Easy to customize size and shape; safe foam material",
     },
     {
-        "product_url": "https://www.amazon.com/Lollacup-Organic-Cotton-Playmat/dp/B07THY88SV/ref=nosim?tag=nobsmed07-20",
         "name": "Lollacup Organic Cotton Playmat",
         "material_safety": "GOTS certified organic cotton and natural filling",
         "comfort": "Soft, breathable surface with gentle cushioning",
@@ -563,7 +502,6 @@ non_toxic_playmats = [
         "biggest_positive": "Highly natural materials; excellent breathability and softness",
     },
     {
-        "product_url": "https://www.amazon.com/Silikids-Silicone-Play-Mat/dp/B08FMPD8PK/ref=nosim?tag=nobsmed07-20",
         "name": "Silikids Silicone Playmat",
         "material_safety": "100% food-grade, BPA- and phthalate-free silicone",
         "comfort": "Soft but firm surface; waterproof and easy to clean",
@@ -576,7 +514,6 @@ non_toxic_playmats = [
         "biggest_positive": "Durable, hygienic, and super easy to clean",
     },
     {
-        "product_url": "https://www.amazon.com/Baby-Care-Play-Mat-Eccomum/dp/B07Y93DXHZ/ref=nosim?tag=nobsmed07-20",
         "name": "Baby Care Play Mat by Eccomum",
         "material_safety": "Non-toxic, BPA-, phthalate-, lead-free, certified safe foam",
         "comfort": "Thick foam padding with soft surface",
@@ -592,7 +529,6 @@ non_toxic_playmats = [
 
 baby_carrier_wraps = [
     {
-        "product_url": "https://www.amazon.com/Moby-Wrap-Classic-Carrier/dp/B0017XOSKK/ref=nosim?tag=nobsmed07-20",
         "name": "Moby Wrap Classic",
         "safety": "Supports newborn to 35 lbs; certified safe fabric",
         "comfort": "Soft, stretchy cotton blend; distributes weight evenly",
@@ -600,12 +536,11 @@ baby_carrier_wraps = [
         "material": "100% cotton",
         "price_range": "$45–55",
         "reference_url": "https://www.babylist.com/hello-baby/best-baby-carriers",
-        "amazon_url": "https://www.amazon.com/Moby-Wrap-Classic-Carrier/dp/B0017XOSKK/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B000OY539A/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Steep learning curve for proper tying",
         "biggest_positive": "Versatile and very supportive for newborns",
     },
     {
-        "product_url": "https://www.amazon.com/Boba-Baby-Carrier-Wrap/dp/B00MZ4AXN6/ref=nosim?tag=nobsmed07-20",
         "name": "Boba Wrap",
         "safety": "Supports newborn to 35 lbs; breathable and secure",
         "comfort": "Soft, stretchy cotton/spandex blend; snug fit",
@@ -618,7 +553,6 @@ baby_carrier_wraps = [
         "biggest_positive": "Comfortable stretch with easier wrapping",
     },
     {
-        "product_url": "https://www.amazon.com/Solly-Baby-Wrap/dp/B00H7D7G5Y/ref=nosim?tag=nobsmed07-20",
         "name": "Solly Baby Wrap",
         "safety": "Designed for newborns and infants up to 25 lbs; breathable fabric",
         "comfort": "Lightweight, soft, silky fabric; great for warmer weather",
@@ -631,7 +565,6 @@ baby_carrier_wraps = [
         "biggest_positive": "Soft, lightweight fabric ideal for summer and sensitive skin",
     },
     {
-        "product_url": "https://www.amazon.com/LILLEbaby-Baby-Wrap/dp/B07FKKKR6W/ref=nosim?tag=nobsmed07-20",
         "name": "LILLEbaby Baby Wrap",
         "safety": "Supports newborn to 25 lbs; strong and durable fabric",
         "comfort": "Breathable cotton blend with ergonomic design",
@@ -647,7 +580,6 @@ baby_carrier_wraps = [
 
 post_delivery_healing_products = [
     {
-        "product_url": "https://www.amazon.com/Earth-Mama-Organic-Perineal-Spray/dp/B001FX46XY/ref=nosim?tag=nobsmed07-20",
         "name": "Earth Mama Organic Perineal Spray",
         "purpose": "Soothes and heals perineal area after delivery",
         "effectiveness": "Reduces irritation, promotes healing with herbal ingredients",
@@ -655,12 +587,11 @@ post_delivery_healing_products = [
         "ease_of_use": "Easy spray application, portable",
         "price_range": "$10–15",
         "reference_url": "https://www.whattoexpect.com/baby-products/earth-mama-perineal-spray-review/",
-        "amazon_url": "https://www.amazon.com/Earth-Mama-Organic-Perineal-Spray/dp/B001FX46XY/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B0065ZTKWS/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "May require frequent application",
         "biggest_positive": "Natural ingredients and gentle relief",
     },
     {
-        "product_url": "https://www.amazon.com/Frida-Mom-Perineal-Cooling-Pads/dp/B01FZX3NCI/ref=nosim?tag=nobsmed07-20",
         "name": "Frida Mom Perineal Cooling Pads",
         "purpose": "Provides cooling relief for perineal swelling and discomfort",
         "effectiveness": "Immediate cooling effect; reduces pain and swelling",
@@ -673,7 +604,6 @@ post_delivery_healing_products = [
         "biggest_positive": "Convenient and fast-acting relief",
     },
     {
-        "product_url": "https://www.amazon.com/Lanolin-Nipple-Cream-Lansinoh/dp/B000RQWFM6/ref=nosim?tag=nobsmed07-20",
         "name": "Lanolin Nipple Cream (Lansinoh)",
         "purpose": "Heals cracked, sore nipples during breastfeeding",
         "effectiveness": "Soothes and promotes healing; safe for baby",
@@ -681,12 +611,11 @@ post_delivery_healing_products = [
         "ease_of_use": "Apply directly to nipples; no need to remove before feeding",
         "price_range": "$8–15",
         "reference_url": "https://www.whattoexpect.com/baby-products/lansinoh-nipple-cream-review/",
-        "amazon_url": "https://www.amazon.com/Lansinoh-HPA-Lanolin-Nipple-Cream/dp/B000RQWFM6/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B005MI648C/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Can be greasy if over-applied",
         "biggest_positive": "Trusted and effective for breastfeeding moms",
     },
     {
-        "product_url": "https://www.amazon.com/TUCKS-Medicated-Cooling-Pads/dp/B0011U3P94/ref=nosim?tag=nobsmed07-20",
         "name": "Tucks Medicated Cooling Pads",
         "purpose": "Relieves hemorrhoid pain and irritation after delivery",
         "effectiveness": "Cooling effect soothes pain and itching",
@@ -694,12 +623,11 @@ post_delivery_healing_products = [
         "ease_of_use": "Disposable pads; easy to use",
         "price_range": "$5–10",
         "reference_url": "https://www.babygearlab.com/reviews/health/tucks-cooling-pads",
-        "amazon_url": "https://www.amazon.com/TUCKS-Medicated-Cooling-Pads/dp/B0011U3P94/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B06ZYLFV8L/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Single-use; may cause mild dryness",
         "biggest_positive": "Affordable and widely available relief",
     },
     {
-        "product_url": "https://www.amazon.com/Frida-Mom-Upside-Down-Peri-Bottle/dp/B07RGQFLJB/ref=nosim?tag=nobsmed07-20",
         "name": "Frida Mom Upside Down Peri Bottle",
         "purpose": "Cleans perineal area without wiping after delivery",
         "effectiveness": "Soothes and gently cleans postpartum sensitive areas",
@@ -712,7 +640,6 @@ post_delivery_healing_products = [
         "biggest_positive": "Essential for gentle postpartum hygiene",
     },
     {
-        "product_url": "https://www.amazon.com/Kindred-Bravely-Abdominal-Support-Postpartum/dp/B09M9SJSGB/ref=nosim?tag=nobsmed07-20",
         "name": "Kindred Bravely Abdominal Recovery Binder",
         "purpose": "Provides abdominal and lower back support post C-section or vaginal delivery",
         "effectiveness": "Reduces pain and improves posture during healing",
@@ -725,7 +652,6 @@ post_delivery_healing_products = [
         "biggest_positive": "Targeted core support for faster recovery",
     },
     {
-        "product_url": "https://www.amazon.com/Lansinoh-Therapearl-Breast-Therapy-Pack/dp/B007VT2OQ4/ref=nosim?tag=nobsmed07-20",
         "name": "Lansinoh Hot and Cold Breast Therapy Pads",
         "purpose": "Relieves breast engorgement, plugged ducts, and pain",
         "effectiveness": "Microwavable or freezable for temperature therapy",
@@ -738,7 +664,6 @@ post_delivery_healing_products = [
         "biggest_positive": "Dual hot/cold therapy with reusable design",
     },
     {
-        "product_url": "https://www.amazon.com/Dermoplast-Relieving-Spray-2-75-Ounce-Canisters/dp/B000GCQZX0/ref=nosim?tag=nobsmed07-20",
         "name": "Dermoplast Pain Relieving Spray",
         "purpose": "Numbs and soothes perineal or incision-area pain",
         "effectiveness": "Provides fast-acting topical pain relief",
@@ -746,12 +671,11 @@ post_delivery_healing_products = [
         "ease_of_use": "Spray application; travel-friendly",
         "price_range": "$7–10",
         "reference_url": "https://www.babylist.com/hello-baby/best-postpartum-pain-relief",
-        "amazon_url": "https://www.amazon.com/Dermoplast-Relieving-Spray-2-75-Ounce-Canisters/dp/B000GCQZX0/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B073PBPC51/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Not for internal use; short-acting",
         "biggest_positive": "Trusted hospital-grade pain relief",
     },
     {
-        "product_url": "https://www.amazon.com/Sitz-Bath-Soak-Postpartum-Recovery/dp/B074W8HBMR/ref=nosim?tag=nobsmed07-20",
         "name": "Sitz Bath Soak by Thena Natural Wellness",
         "purpose": "Soothes hemorrhoids, tears, and swelling in perineal area",
         "effectiveness": "Reduces inflammation and promotes natural healing",
@@ -767,7 +691,6 @@ post_delivery_healing_products = [
 
 non_toxic_infant_car_seats = [
     {
-        "product_url": "https://www.amazon.com/Stokke-Pipa-Nuna-Black-Seat/dp/B07KZLS66W/ref=nosim?tag=nobsmed07-20",
         "name": "Stokke PIPA by Nuna Infant Car Seat",
         "safety": "All models (post-2020) are flame retardant & PFAS-free, Greenguard Gold certified",
         "ease_of_install": "Rigid LATCH, color-coded indicators for correct leveling",
@@ -780,7 +703,6 @@ non_toxic_infant_car_seats = [
         "biggest_positive": "Outstanding safety in a super-light, non-toxic design",
     },
     {
-        "product_url": "https://www.amazon.com/Chicco-ClearTex%C2%AE-Rear-Facing-Compatible-Strollers/dp/B08Q1LS11S/ref=nosim?tag=nobsmed07-20",
         "name": "Chicco KeyFit 35 ClearTex Infant Car Seat",
         "safety": "ClearTex fabric is flame retardant & PFAS-free; Greenguard Gold certified",
         "ease_of_install": "Easy LATCH install with leveling indicators",
@@ -793,7 +715,6 @@ non_toxic_infant_car_seats = [
         "biggest_positive": "Affordable, widely available, and easy to install",
     },
     {
-        "product_url": "https://www.amazon.com/Clek-Adjustable-Lightweight-Positions-Retardant-Free/dp/B0CZPCX345/ref=nosim?tag=nobsmed07-20",
         "name": "Clek Liing Infant Car Seat (Mammoth/Railroad fabric)",
         "safety": "Flame retardant & PFAS-free Mammoth/Railroad fabric; narrow base",
         "ease_of_install": "Built-in rigid LATCH, compact & easy to fit 3-across",
@@ -806,7 +727,6 @@ non_toxic_infant_car_seats = [
         "biggest_positive": "Premium safety and narrow design for tight car bellies",
     },
     {
-        "product_url": "https://www.amazon.com/Maxi-Cosi-Mico-Infant-Polished-Pebble/dp/B08ZGL173B/ref=nosim?tag=nobsmed07-20",
         "name": "Maxi-Cosi Mico 30 PureCosi Infant Car Seat",
         "safety": "PureCosi fabric is flame retardant & PFAS-free polyester",
         "ease_of_install": "One-click LATCH, adjustable base & canopy",
@@ -822,7 +742,6 @@ non_toxic_infant_car_seats = [
 
 non_toxic_bassinets = [
     {
-        "product_url": "https://www.amazon.com/Sn%C3%BCz-SnuzPod-Bedside-Crib-Natural/dp/B08J9151BL/ref=nosim?tag=nobsmed07-20",
         "name": "SnuzPod4 Bedside Bassinet",
         "safety": "JPMA-certified; certified breathable mattress, adjustable height/incline",
         "materials": "Sustainably sourced wood; fabric free of flame retardants",
@@ -834,31 +753,28 @@ non_toxic_bassinets = [
         "biggest_positive": "Simple, stylish, sustainably built with non-toxic materials",
     },
     {
-        "product_url": "https://www.amazon.com/Babybay-Original-Co-Sleeper-Natural-Untreated/dp/B007NZHXZK/ref=nosim?tag=nobsmed07-20",
         "name": "babybay Original Bedside Sleeper",
         "safety": "No plastics or harmful glues; complies with ASTM/CPSC/FSC standards",
         "materials": "100% natural beechwood, water-based finishes, low-VOC",
         "ease_of_use": "Attaches to bed frame; converts to freestanding",
         "price_range": "$245+",
         "reference_url": "https://sustainawill.com/best-non-toxic-and-organic-bassinets/",
-        "amazon_url": "https://www.amazon.com/Babybay-Original-Co-Sleeper-Natural-Untreated/dp/B007NZHXZK/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B007NZHXZK/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Mattress not organic; may require buying separately",
         "biggest_positive": "Completely natural wood design, zero-VOC finishes",
     },
     {
-        "product_url": "https://www.amazon.com/BabyBj%C3%B6rn-041121US-BABYBJORN-Cradle-White/dp/B008TML9AQ/ref=nosim?tag=nobsmed07-20",
         "name": "BABYBJÖRN Cradle",
         "safety": "OEKO‑TEX Standard 100 certified fabrics; breathable mesh sides",
         "materials": "Formal-dehyde–free wood/MDF; certified polyester fabrics",
         "ease_of_use": "Lightweight, portable, gentle rocking; machine‑washable cover",
         "price_range": "$199–230",
         "reference_url": "https://greatforkids.org/bassinet/best-non-toxic-bassinet/",
-        "amazon_url": "https://www.amazon.com/BabyBj%C3%B6rn-041121US-BABYBJORN-Cradle-White/dp/B008TML9AQ/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/dp/B008TML9AQ/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "No bedside attach option; limited longevity (~6 mo)",
         "biggest_positive": "Highly breathable, compact, and non-toxic materials",
     },
     {
-        "product_url": "https://www.amazon.com/BreathableBaby-Breathable-Mesh-Portable-Sleeper/dp/B08T7TNJWZ/ref=nosim?tag=nobsmed07-20",
         "name": "BreathableBaby Mesh Portable Sleeper",
         "safety": "Greenguard Gold certified; non-toxic paint, free of lead, phthalates, VOCs",
         "materials": "Sustainable New Zealand pine, mesh sides",

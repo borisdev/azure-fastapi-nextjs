@@ -217,7 +217,7 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
     # Find fields that have at least one non-None, non-empty value
     useful_fields = []
     for field in all_fields:
-        if field in ["reference_url", "amazon_url"]:  # Skip these fields
+        if field in ["reference_url"]:  # Skip these fields (amazon_url is handled separately for links)
             continue
 
         has_data = False
@@ -242,7 +242,7 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
     columns = []
 
     # First add the product name/link column
-    if any(field in useful_fields for field in ["product_url", "name", "title"]):
+    if any(field in useful_fields for field in ["amazon_url", "name", "title"]):
         columns.append(
             {
                 "field": "name",  # Use name as the primary field, fallback handled in template
@@ -253,7 +253,7 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
 
     # Then add other fields except the ones we used for the link
     for field in useful_fields:
-        if field not in ["product_url", "name", "title"]:
+        if field not in ["amazon_url", "name", "title"]:
             column = {
                 "field": field,
                 "label": default_labels.get(field, field.replace("_", " ").title()),
@@ -270,7 +270,7 @@ def create_table_config(products: list, title: str, field_labels: dict = None) -
                 product_dict["_link_text"] = (
                     product.display_name or product.name or product.title or "Product"
                 )
-                product_dict["_link_url"] = product.product_url or "#"
+                product_dict["_link_url"] = product.amazon_url or "#"
             else:
                 value = getattr(product, column["field"], None)
                 product_dict[column["field"]] = value if value else "N/A"
