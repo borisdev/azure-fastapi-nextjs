@@ -55,7 +55,7 @@ class InfantProduct(BaseModel):
     def display_name(self) -> str:
         """Return the appropriate name/title for display"""
         return self.name or self.title or "Unknown Product"
-    
+
     @property
     def product_url(self) -> str | None:
         """Backwards compatibility - returns amazon_url"""
@@ -599,7 +599,7 @@ post_delivery_healing_products = [
         "ease_of_use": "Disposable pads, easy to apply and discard",
         "price_range": "$15–20 for pack",
         "reference_url": "https://www.babylist.com/hello-baby/best-postpartum-products",
-        "amazon_url": "https://www.amazon.com/Frida-Mom-Perineal-Cooling-Pads/dp/B01FZX3NCI/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/s?k=Frida+Mom+Perineal+Cooling+Pads&linkCode=ll2&tag=nobsmed07-20&linkId=0624faebb37c673eefb28d9f09eeedef&language=en_US&ref_=as_li_ss_tl",
         "biggest_negative": "Single-use; ongoing cost",
         "biggest_positive": "Convenient and fast-acting relief",
     },
@@ -635,7 +635,7 @@ post_delivery_healing_products = [
         "ease_of_use": "Handheld squeeze bottle with angled neck",
         "price_range": "$15–20",
         "reference_url": "https://www.babylist.com/hello-baby/best-peri-bottle",
-        "amazon_url": "https://www.amazon.com/Frida-Mom-Upside-Down-Peri-Bottle/dp/B07RGQFLJB/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/s?k=Frida+Mom+Upside+Down+Peri+Bottle&linkCode=ll2&tag=nobsmed07-20&linkId=676d89080603a45a4eb052b0c07e83de&language=en_US&ref_=as_li_ss_tl",
         "biggest_negative": "Needs refilling often; only comes in one size",
         "biggest_positive": "Essential for gentle postpartum hygiene",
     },
@@ -647,8 +647,8 @@ post_delivery_healing_products = [
         "ease_of_use": "Adjustable Velcro closure; machine washable",
         "price_range": "$45–65",
         "reference_url": "https://www.whattoexpect.com/baby-products/postpartum-belly-wraps/",
-        "amazon_url": "https://www.amazon.com/Kindred-Bravely-Abdominal-Support-Postpartum/dp/B09M9SJSGB/ref=nosim?tag=nobsmed07-20",
         "biggest_negative": "Can feel tight if worn too long",
+        "amazon_url": "https://www.amazon.com/s?k=Kindred+Bravely+Abdominal+Recovery+Binder&crid=1JF5LDUAWQI3B&sprefix=kindred+bravely+abdominal+recovery+binder%2Caps%2C192&linkCode=ll2&tag=nobsmed07-20&linkId=e339d4f8d38bded72d6703c117307f89&language=en_US&ref_=as_li_ss_tl",
         "biggest_positive": "Targeted core support for faster recovery",
     },
     {
@@ -659,7 +659,7 @@ post_delivery_healing_products = [
         "ease_of_use": "Reusable pads fit inside bra or pump flanges",
         "price_range": "$12–18",
         "reference_url": "https://www.babygearlab.com/reviews/health/lansinoh-therapy-pads",
-        "amazon_url": "https://www.amazon.com/Lansinoh-Therapearl-Breast-Therapy-Pack/dp/B007VT2OQ4/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/s?k=Lansinoh+Hot+and+Cold+Breast+Therapy+Pads&linkCode=ll2&tag=nobsmed07-20&linkId=ee507ddd2a401d92df5aa6ed29927ddc&language=en_US&ref_=as_li_ss_tl",
         "biggest_negative": "Pads can lose heat quickly",
         "biggest_positive": "Dual hot/cold therapy with reusable design",
     },
@@ -683,7 +683,7 @@ post_delivery_healing_products = [
         "ease_of_use": "Add to warm water; use in sitz bath or peri bottle",
         "price_range": "$15–20",
         "reference_url": "https://www.healthline.com/health/postpartum-sitz-bath-benefits",
-        "amazon_url": "https://www.amazon.com/Sitz-Bath-Soak-Postpartum-Recovery/dp/B074W8HBMR/ref=nosim?tag=nobsmed07-20",
+        "amazon_url": "https://www.amazon.com/s?k=Sitz+Bath+Soak+by+Thena+Natural+Wellness&crid=1MAKBEXD9LT01&sprefix=sitz+bath+soak+by+thena+natural+wellness%2Caps%2C267&linkCode=ll2&tag=nobsmed07-20&linkId=045b965aeb74fa617426f607d32023af&language=en_US&ref_=as_li_ss_tl",
         "biggest_negative": "Requires separate sitz tub or basin",
         "biggest_positive": "Natural herbal relief with proven benefits",
     },
