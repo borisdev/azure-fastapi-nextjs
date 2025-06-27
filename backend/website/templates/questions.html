@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="text-center pt-5">
+            <h1>Health Hack Questions</h1>
+            <p class="lead">A curated list</p>
+            <hr class="my-4" />
+        </div>
+
+        <div class="container product-list mb-5">
+            <div class="row">
+                <div class="col-12">
+                    {% for question in questions %}
+                    <h3>{{ question.question }}</h3>
+
+                    {% for health_hack in question.health_hacks %}
+                    <div class="card ms-4 mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0 text-primary">{{ health_hack.health_hack }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="product-description">
+                                <strong>For:</strong> {{ health_hack.health_disorder }}<br />
+                                <strong>Expected Outcomes:</strong> {{ health_hack.intended_outcomes }}<br />
+                                <strong>Results:</strong> {{ health_hack.experienced_outcomes }}<br />
+                                <strong>How it Works:</strong> {{ health_hack.mechanism }}<br />
+                                <strong>Dosage:</strong> {{ health_hack.dosage }}
+                            </div>
+
+                            <!-- Products for this health hack -->
+                            {% if health_hack.products %}
+                            <hr class="my-3">
+                            <h6 class="text-muted mb-2">Recommended Products:</h6>
+                            {% for product in health_hack.products %}
+                            <div class="ms-3 mb-2">
+                                <a href="{{ product.url }}" target="_blank" class="product-title">
+                                    {{ product.title }}
+                                </a>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %} {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% include 'footer.html' %}
+    </body>
+</html>

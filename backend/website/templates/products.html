@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include 'head.html' %}
+    </head>
+
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="text-center pt-5">
+            <h1>Amazon Products for Pregancy and Infant Care</h1>
+            <p class="lead">A curated list</p>
+            <hr class="my-4" />
+        </div>
+
+        <!-- Product Categories -->
+        <div class="container mb-5">
+            <h2 class="text-center mb-4">Infant Product Comparison Tables</h2>
+
+            {% for category in product_categories %}
+            <div class="mb-5">
+                <h3>{{ category.title }}</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product</th>
+                                <th>Price Range</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in category.products %}
+                            <tr>
+                                <td>
+                                    <a href="{{ product.url }}" target="_blank" class="product-title">
+                                        {{ product.title }}
+                                    </a>
+                                </td>
+                                <td>{{ product.price_range }}</td>
+                                <td>{{ product.pros }}</td>
+                                <td>{{ product.cons }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% include 'footer.html' %}
+    </body>
+</html>

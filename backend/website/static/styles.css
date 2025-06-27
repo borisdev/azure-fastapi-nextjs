@@ -1,3 +1,57 @@
 h1 {
   color: green;
 }
+
+/* Product and Questions Page Styles */
+.product-list {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.product-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: box-shadow 0.2s ease;
+}
+
+.product-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-title {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.product-title:hover {
+    text-decoration: underline;
+}
+
+.product-description {
+    color: #555;
+    margin-top: 8px;
+}
+
+.product-price {
+    color: #b12704;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* Health Hack Specific Styles */
+.health-hack-card {
+    border-left: 4px solid #0066cc;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.health-hack-title {
+    color: #0066cc;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
