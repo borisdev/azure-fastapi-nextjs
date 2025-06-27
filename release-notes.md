@@ -8,6 +8,24 @@
 
 ### Internal
 
+## v8.8 (2025-06-27)
+
+### Code Quality & Architecture
+- 🏗️ **Unified Data Model**: Consolidated all Amazon product data to use single `AmazonProduct` class with consistent fields (title, url, category, pros, cons, price_range)
+- 🧹 **Code Organization**: Split monolithic `jennas_amazon_products.py` into focused modules:
+  - `questions.py` - Question data and logic
+  - `amazon_products.py` - Product catalog and display logic
+- 🗑️ **Technical Debt**: Removed obsolete `InfantProduct` and `HealthHackProduct` classes
+- ⚡ **Template Simplification**: Streamlined products page template by removing complex dynamic table configuration
+
+### Bug Fixes
+- 🔧 **Data Consistency**: All product categories now display with consistent column structure
+- 🛠️ **Template Reliability**: Fixed template rendering issues caused by mixed data structures
+
+### Development Experience
+- 📊 **Better Maintainability**: Cleaner separation of concerns between questions and products
+- 🧪 **Comprehensive Testing**: Full integration test coverage for all domains and product pages
+
 ## v8.3 (2025-06-22)
 
 ### Infrastructure Improvements

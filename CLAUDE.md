@@ -56,7 +56,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v8.7
+#### Current Version: v8.8
 
 #### Full Deployment Process
 ```bash
@@ -67,13 +67,13 @@ cd backend
 az acr login --name nobsregistry
 
 # 3. Build new Docker image (increment version number)
-docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v8.8 .
+docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v8.9 .
 
 # 4. Push image to registry
-docker push nobsregistry.azurecr.io/nobs_backend_amd64:v8.8
+docker push nobsregistry.azurecr.io/nobs_backend_amd64:v8.9
 
 # 5. Update container app to use new image
-az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v8.8
+az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v8.9
 
 # 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
@@ -107,6 +107,7 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v8.8: Refactored Amazon Products with unified AmazonProduct model - consolidated data structures, split jennas_amazon_products.py into focused modules (questions.py, amazon_products.py), improved template reliability and maintainability
 - v8.7: Fixed all broken Amazon product links - consolidated to single amazon_url field, updated 650+ products with working URLs and referral tags
 - v8.6: Dynamic table system for Amazon Products - automatically hides N/A columns, cleaned up price ranges, improved page layout
 - v8.5: Added Amazon Products page with pregnancy-focused product listings and affiliate links
