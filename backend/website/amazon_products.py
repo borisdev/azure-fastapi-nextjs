@@ -94,7 +94,7 @@ infant_care_books = [
     ),
     AmazonProduct(
         title="Caring for Your Baby and Young Child by American Academy of Pediatrics",
-        url="https://amzn.to/4np4eju",
+        url="https://www.amazon.com/Caring-Your-Baby-Young-Child/dp/0593598199/ref=nosim?tag=nobsmed07-20",
         category="Baby Care Books",
         price_range="$20–30 paperback",
         cons="Some parents find it less approachable and more like a medical manual",
@@ -102,7 +102,7 @@ infant_care_books = [
     ),
     AmazonProduct(
         title="The Happiest Baby on the Block by Harvey Karp, M.D.",
-        url="https://amzn.to/3TeZfUP",
+        url="https://www.amazon.com/Happiest-Block-Revised-Updated-Second/dp/0553393235/ref=nosim?tag=nobsmed07-20",
         category="Baby Care Books",
         price_range="$12–18 paperback",
         cons="Narrow focus on soothing; less on other care aspects",
