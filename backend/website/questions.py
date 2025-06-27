@@ -63,7 +63,7 @@ health_hacks.append(
 
 # Build questions list
 question = Question(
-    question="What can I do now during my third trimester pregnancy to ease delivery during labor?",
+    question="In my third trimester of pregnancy, what health hacks can help me have a shorter and easier labor?",
     health_hacks=health_hacks,
 )
 questions = []
