@@ -56,7 +56,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v9.3
+#### Current Version: v9.4
 
 #### Full Deployment Process
 ```bash
@@ -67,13 +67,13 @@ cd backend
 az acr login --name nobsregistry
 
 # 3. Build new Docker image (increment version number)
-docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v9.4 .
+docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v9.5 .
 
 # 4. Push image to registry
-docker push nobsregistry.azurecr.io/nobs_backend_amd64:v9.4
+docker push nobsregistry.azurecr.io/nobs_backend_amd64:v9.5
 
 # 5. Update container app to use new image
-az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v9.4
+az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v9.5
 
 # 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
@@ -107,6 +107,7 @@ For first-time Azure infrastructure setup, use these bash scripts in the root di
 - **Custom Domains**: nobsmed.com, www.nobsmed.com
 
 #### Version History
+- v9.4: Mobile UX improvements with responsive design - fixed navbar to always show all navigation items on tiny screens, replaced table layout with modern card-based responsive grid for products page, added visual enhancements with color-coded pros/cons and icons
 - v9.3: Enhanced deployment automation with GitHub workflow - added automated PR creation, deployment status updates, complete git workflow with master synchronization, and professional team collaboration features
 - v9.1: Fixed robots.txt formatting issues - removed leading whitespace and added explicit SEMrushBot disallow to resolve Google Search Console "Indexed, though blocked by robots.txt" errors
 - v9.0: gtag analytics and Docker build improvements - added Google Analytics tracking, fixed Docker Poetry install with --no-root flag for better layer caching
