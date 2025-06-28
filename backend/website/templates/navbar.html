@@ -1,10 +1,11 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary flex-column">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">
+<nav class="navbar bg-body-tertiary flex-column">
+    <div class="container-fluid flex-column flex-sm-row">
+        <a class="navbar-brand mb-2 mb-sm-0" href="/">
             <div class="courier-font" style="color: #0f1042">
                 <span style="color: #fe5e00">No</span
                 ><span style="color: #195190ff">bs</span
                 ><span style="color: #0f1042">med</span>
+                <span style="color: #fe5e00; font-size: 0.9em;">on Health Hacks</span>
             </div>
         </a>
         <!-- Search form
@@ -21,35 +22,24 @@
                 </button>
             </form>
         -->
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/"
-                        >Search Health Hacks</a
+        <div class="navbar-nav-scroll" style="max-height: none;">
+            <ul class="navbar-nav flex-row flex-wrap justify-content-center justify-content-sm-start">
+                <li class="nav-item me-2 me-sm-3">
+                    <a class="nav-link active px-2 py-1" aria-current="page" href="/"
+                        >Search</a
                     >
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/questions">Questions</a>
+                <li class="nav-item me-2 me-sm-3">
+                    <a class="nav-link px-2 py-1" href="/questions">Questions</a>
+                </li>
+                <li class="nav-item me-2 me-sm-3">
+                    <a class="nav-link px-2 py-1" href="/products">Products</a>
+                </li>
+                <li class="nav-item me-2 me-sm-3">
+                    <a class="nav-link px-2 py-1" href="/about">About us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/products">Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/about">About us</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/faq">FAQ</a>
+                    <a class="nav-link px-2 py-1" href="/faq">FAQ</a>
                 </li>
                 <!--
                 <li class="nav-item">
