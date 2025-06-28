@@ -56,7 +56,7 @@ docker buildx build --platform linux/amd64 -t image:tag .  # AMD64 build for Azu
 
 ### Azure Deployment
 
-#### Current Version: v9.1
+#### Current Version: v9.2
 
 #### Full Deployment Process
 ```bash
@@ -67,13 +67,13 @@ cd backend
 az acr login --name nobsregistry
 
 # 3. Build new Docker image (increment version number)
-docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v9.2 .
+docker buildx build --platform linux/amd64 -t nobsregistry.azurecr.io/nobs_backend_amd64:v9.3 .
 
 # 4. Push image to registry
-docker push nobsregistry.azurecr.io/nobs_backend_amd64:v9.2
+docker push nobsregistry.azurecr.io/nobs_backend_amd64:v9.3
 
 # 5. Update container app to use new image
-az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v9.2
+az containerapp update --name nobswebsite --resource-group nobsmed --image nobsregistry.azurecr.io/nobs_backend_amd64:v9.3
 
 # 6. Verify deployment
 az containerapp show --name nobswebsite --resource-group nobsmed --query "properties.template.containers[0].image" --output tsv
