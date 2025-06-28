@@ -37,8 +37,8 @@ health_hacks.append(
         dosage="2.4 grams per day (2-4 cups of tea, depending on strength)",
         products=[
             AmazonProduct(
-                url="https://www.amazon.com/Traditional-Medicinals-Organic-Raspberry-Caffeine/dp/B000E663GW/ref=nosim?tag=nobsmed07-20",
-                title="Traditional Medicinals Organic Raspberry Leaf Tea",
+                url="https://www.amazon.com/MAC-BOTANICALS-Organic-Raspberry-Leaves/dp/B0BG3JT4F9/ref=nosim?tag=nobsmed07-20",
+                title="J MAC BOTANICALS, Organic Red Raspberry Leaf, Herbal Tea (16 Ounce Bag 200+ Cups) Cut & sifted Dried Leaf",
             )
         ],
     )
@@ -54,8 +54,8 @@ health_hacks.append(
         dosage="4 dates per day (about 70 grams)",
         products=[
             AmazonProduct(
-                url="https://www.amazon.com/Joolies-Organic-Medjool-Dates-Pound/dp/B01MRSZ8M1/ref=nosim?tag=nobsmed07-20",
-                title="Joolies Organic Medjool Dates",
+                url="https://www.amazon.com/Terrasoul-Superfoods-Organic-Medjool-Pounds/dp/B01MREWFHO/ref=nosim?tag=nobsmed07-20",
+                title="Terrasoul Superfoods Organic Medjool Dates, 2 Lbs - Soft Chewy Texture | Sweet Caramel Flavor | Farm Fresh",
             )
         ],
     )
@@ -63,7 +63,7 @@ health_hacks.append(
 
 # Build questions list
 question = Question(
-    question="What can I do now during my third trimester pregnancy to ease delivery during labor?",
+    question="How to have an easier labor delivery during the third trimester pregnancy?",
     health_hacks=health_hacks,
 )
 questions = []

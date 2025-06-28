@@ -131,26 +131,16 @@ async def subdomain_middleware(request: Request, call_next):
 @app.get("/robots.txt", response_class=PlainTextResponse)
 def robots(request: Request):
     if request.state.subdomain == "test":
-        data = """
-            User-agent: *
-            Disallow: /
-        """
+        data = """User-agent: *
+Disallow: /"""
     else:
-        # data = """User-agent: *\nAllow: /"""
-        # User-agent: SemrushBot Disallow: /
-        # Disallow: /
-        # Disallow: /
-        # Allow: /faq
-        # Allow: /about
-        # Allow: /amazon-products
-        data = """
-            User-agent: SEMrushBot
+        data = """User-agent: SEMrushBot
+Disallow: /
 
-            User-agent: *
-            Allow: /
-        """
-
-        return data
+User-agent: *
+Allow: /"""
+    
+    return data
 
 
 @app.get("/about")
